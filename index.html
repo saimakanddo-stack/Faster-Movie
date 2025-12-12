@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Streaming App - মুভি স্ট্রিমিং অ্যাপ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Monetag SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='31270959' data-sdk='show_31270959'></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --text: #ffffff;
+            --text-secondary: #b8b8b8;
+            --card-bg: #0f172a;
+            --border: #2d3748;
+            --blur-percent: 0%;
+        }
+        
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 70px;
+            font-size: 16px;
+        }
+        
+        /* Language Switcher */
+        .lang-switcher {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+        }
+        
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--accent), var(--secondary));
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo i {
+            color: var(--highlight);
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 768px) {
+            .search-container {
+                margin: 0 20px;
+                width: auto;
+            }
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 45px 12px 45px;
+            border-radius: 25px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Ads Sections */
+        .ads-section {
+            margin: 15px auto;
+            max-width: 1200px;
+            text-align: center;
+            display: none;
+        }
+        
+        .ads-container {
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        
+        .ads-banner {
+            width: 100%;
+            max-width: 728px;
+            margin: 0 auto;
+            height: 90px;
+        }
+        
+        .ads-native {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            height: 100px;
+        }
+        
+        .ads-square {
+            width: 300px;
+            height: 250px;
+            margin: 15px auto;
+        }
+        
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            margin: 20px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--highlight);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Movies Grid */
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+        
+        /* Movie Card */
+        .movie-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .movie-poster {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 9/16;
+            overflow: hidden;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            filter: blur(var(--blur-percent));
+        }
+        
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+        
+        .movie-info-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+            z-index: 2;
+        }
+        
+        .info-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .info-custom {
+            background-color: var(--highlight);
+            color: white;
+        }
+        
+        .info-quality {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .info-new-server {
+            background-color: #f59e0b;
+            color: white;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 3;
+            font-size: 0.6rem;
+            padding: 2px 6px;
+        }
+        
+        .movie-info-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            display: flex;
+            justify-content: space-between;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            z-index: 2;
+        }
+        
+        .info-language {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .info-type {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        
+        .movie-details {
+            padding: 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .movie-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        .views-count, .status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Load More Button */
+        .load-more-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .load-more-btn {
+            background: linear-gradient(to right, var(--accent), var(--highlight));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .load-more-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(233, 69, 96, 0.3);
+        }
+        
+        .load-more-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Movie Detail Modal - New UI */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 95vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        
+        .close-modal:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        /* Movie Header */
+        .movie-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .modal-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+        
+        .modal-subtitle {
+            color: #FFD700;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .info-col {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .type-value {
+            color: #FFA500;
+        }
+        
+        .language-value {
+            color: #FFD700;
+        }
+        
+        .quality-value {
+            color: #00FFFF;
+        }
+        
+        /* Screenshots Section */
+        .screenshots-section {
+            margin-bottom: 25px;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .swiper {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        @media (min-width: 768px) {
+            .swiper {
+                height: 250px;
+            }
+        }
+        
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .swiper-button-next, .swiper-button-prev {
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 20px;
+        }
+        
+        /* Details Card (Now below screenshots) */
+        .details-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .details-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-icon {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--text);
+            min-width: 90px;
+        }
+        
+        .detail-value {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+        
+        .storyline-section {
+            margin-top: 20px;
+        }
+        
+        .storyline-title {
+            font-size: 1.3rem;
+            color: var(--highlight);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .storyline-text {
+            color: var(--text);
+            line-height: 1.6;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        /* Download Section */
+        .download-section {
+            margin-bottom: 25px;
+        }
+        
+        .download-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .download-server {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .server-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .new-server-badge {
+            background-color: #f59e0b;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: auto;
+            font-weight: 600;
+        }
+        
+        .quality-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .quality-option {
+            background-color: var(--secondary);
+            border-radius: 8px;
+            padding: 12px;
+            flex: 1;
+            min-width: 180px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .quality-option.locked {
+            opacity: 0.7;
+            border-color: var(--highlight);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quality-option.locked:after {
+            content: "🔒";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .quality-option.unlocked {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+        
+        .quality-text {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Unlock Button */
+        .unlock-btn {
+            display: inline-block;
+            background: linear-gradient(to right, #f59e0b, #ef4444);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .unlock-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--highlight);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--secondary);
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #10b981;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background-color: var(--highlight);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .lang-switcher {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .quality-option {
+                min-width: 100%;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .ads-banner {
+                height: 70px;
+            }
+            
+            .ads-native {
+                height: 80px;
+            }
+            
+            /* New UI Responsive */
+            .modal-title {
+                font-size: 1.8rem;
+            }
+            
+            .info-row {
+                gap: 15px;
+            }
+            
+            .info-col {
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            .details-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            
+            .movie-title {
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .search-input {
+                padding: 10px 40px 10px 40px;
+                font-size: 0.9rem;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+            
+            .ads-square {
+                width: 250px;
+                height: 200px;
+            }
+            
+            /* New UI Responsive */
+            .modal-title {
+                font-size: 1.5rem;
+            }
+            
+            .modal-subtitle {
+                font-size: 0.95rem;
+            }
+            
+            .info-value {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            
+            .movie-title {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn" id="langToggle">
+            <i class="fas fa-globe"></i>
+            <span id="currentLang">English</span>
+        </button>
+    </div>
+    
+    <!-- Ads 1: Banner Ads -->
+    <div id="ads1-container" class="ads-section">
+        <div class="ads-container ads-banner" id="ads1"></div>
+    </div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="#" class="logo" id="siteLogo">
+                <i class="fas fa-film"></i>
+                <span id="appTitle">Movie Hub</span>
+            </a>
+            
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search movies...">
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <h2 class="section-title">
+            <i class="fas fa-fire"></i>
+            <span id="sectionTitle">Popular Movies</span>
+        </h2>
+        
+        <!-- Movies Grid -->
+        <div class="movies-grid" id="moviesGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p id="loadingText">Loading movies...</p>
+            </div>
+        </div>
+        
+        <!-- Load More Button -->
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="load-more-btn" id="loadMoreBtn">
+                <i class="fas fa-plus"></i>
+                <span id="loadMoreText">Load More</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Movie Detail Modal - New UI -->
+    <div class="modal-overlay" id="movieModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Movie Header -->
+                <div class="movie-header">
+                    <h1 class="modal-title" id="modalMovieTitle">Movie Title</h1>
+                    <p class="modal-subtitle" id="modalMovieSubtitle">WEB-DL | Dual Audio</p>
+                    
+                    <div class="info-row">
+                        <div class="info-col">
+                            <span class="info-label">Type:</span>
+                            <span class="info-value type-value" id="modalTypeValue">Movie</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="info-label">Language:</span>
+                            <span class="info-value language-value" id="modalLanguageValue">Dual [Hindi–Tamil]</span>
+                        </div>
+                        <div class="info-col">
+                            <span class="info-label">Quality:</span>
+                            <span class="info-value quality-value" id="modalQualityValue">WEB-DL</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Screenshots Section -->
+                <div class="screenshots-section">
+                    <h4 class="section-subtitle">
+                        <i class="fas fa-images"></i>
+                        <span id="screenshotsTitle">Screenshots</span>
+                    </h4>
+                    <div class="swiper" id="screenshotsSwiper">
+                        <div class="swiper-wrapper" id="screenshotsWrapper">
+                            <!-- Screenshots will be loaded dynamically -->
+                        </div>
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                    </div>
+                </div>
+                
+                <!-- Details Card (Now below screenshots) -->
+                <div class="details-card">
+                    <div class="details-list">
+                        <div class="detail-item">
+                            <span class="detail-icon">⭐</span>
+                            <span class="detail-label">IMDb:</span>
+                            <span class="detail-value" id="modalIMDb">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🎬</span>
+                            <span class="detail-label">Genre:</span>
+                            <span class="detail-value" id="modalGenre">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🗣️</span>
+                            <span class="detail-label">Language:</span>
+                            <span class="detail-value" id="modalLanguageDetail">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📺</span>
+                            <span class="detail-label">Quality:</span>
+                            <span class="detail-value" id="modalQualityDetail">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🖥️</span>
+                            <span class="detail-label">Resolution:</span>
+                            <span class="detail-value" id="modalResolution">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">📅</span>
+                            <span class="detail-label">Released:</span>
+                            <span class="detail-value" id="modalReleased">N/A</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-icon">🎭</span>
+                            <span class="detail-label">Cast:</span>
+                            <span class="detail-value" id="modalCast">N/A</span>
+                        </div>
+                    </div>
+                    
+                    <div class="storyline-section">
+                        <h4 class="storyline-title">📖 Storyline</h4>
+                        <p class="storyline-text" id="modalStoryline">No storyline available.</p>
+                    </div>
+                </div>
+                
+                <!-- Ads 2: Native Ads -->
+                <div id="ads2-container" class="ads-section" style="margin: 20px 0;">
+                    <div class="ads-container ads-native" id="ads2"></div>
+                </div>
+                
+                <!-- Download Section -->
+                <div class="download-section">
+                    <h4 class="section-subtitle">
+                        <i class="fas fa-download"></i>
+                        <span id="downloadTitle">Download Options</span>
+                    </h4>
+                    <div class="download-options" id="downloadOptions">
+                        <p class="loading" id="loadingOptions">Loading download options...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operation successful!</span>
+    </div>
+    
+    <!-- Firebase Configuration -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+  apiKey: "AIzaSyA2z-TDbCBJRsF-68EB53Dxvt5usagUJ3k",
+  authDomain: "movie-sites-d24a9.firebaseapp.com",
+  databaseURL: "https://movie-sites-d24a9-default-rtdb.firebaseio.com",
+  projectId: "movie-sites-d24a9",
+  storageBucket: "movie-sites-d24a9.firebasestorage.app",
+  messagingSenderId: "984858976194",
+  appId: "1:984858976194:web:9301de242575007366005b",
+  measurementId: "G-RF1LJW420T"
+};
+        
+        // Global Variables
+        let db;
+        let lastVisible = null;
+        let DOWNLOAD_BASE_DOMAIN = "https://www.example.com";
+        let unlockedMovies = JSON.parse(sessionStorage.getItem('unlockedMovies') || '{}');
+        let currentMovieId = null;
+        let movieViews = JSON.parse(localStorage.getItem('movieViews') || '{}');
+        let dailyViews = JSON.parse(localStorage.getItem('dailyViews') || '{}');
+        let adsConfig = {
+            ads1: { enabled: true, code: '' },
+            ads2: { enabled: true, code: '' },
+            ads3: { enabled: true, code: '' },
+            ads4: { enabled: true, code: '' },
+            ads5: { enabled: true, code: '' },
+            ads6: { enabled: true, code: '' }
+        };
+        let monetagSDKLoaded = false;
+        let currentLanguage = localStorage.getItem('movieAppLanguage') || 'en';
+        let siteConfig = {
+            siteName: "Movie Hub",
+            siteLogoUrl: "",
+            showLogo: false,
+            placeholderImage: "https://via.placeholder.com/300x450/1a1a2e/ffffff?text=No+Image",
+            enablePosterBlur: false,
+            blurPercentage: 10
+        };
+        
+        // Translations
+        const translations = {
+            en: {
+                appTitle: "Movie Hub",
+                searchPlaceholder: "Search movies...",
+                sectionTitle: "Popular Movies",
+                loadingMovies: "Loading movies...",
+                loadMore: "Load More",
+                noMovies: "No movies found",
+                screenshots: "Screenshots",
+                downloadOptions: "Download Options",
+                loadingOptions: "Loading download options...",
+                noDownloadOptions: "No download options available",
+                unlockBtn: "Unlock to Download",
+                downloadBtn: "Download",
+                views: "views",
+                status: "status",
+                notificationUnlocked: "Download options unlocked!",
+                notificationAdError: "Error loading ad. Please try again.",
+                notificationNetworkError: "Network error. Please check your connection.",
+                notificationSearchError: "Search error. Please try again.",
+                language: "English",
+                customText: "Custom Text",
+                quality: "Quality",
+                languageText: "Language",
+                type: "Type",
+                newServer: "New"
+            },
+            bn: {
+                appTitle: "মুভি হাব",
+                searchPlaceholder: "মুভি খুঁজুন...",
+                sectionTitle: "জনপ্রিয় মুভি",
+                loadingMovies: "মুভি লোড হচ্ছে...",
+                loadMore: "আরো দেখুন",
+                noMovies: "কোনো মুভি পাওয়া যায়নি",
+                screenshots: "স্ক্রিনশট",
+                downloadOptions: "ডাউনলোড অপশন",
+                loadingOptions: "ডাউনলোড অপশন লোড হচ্ছে...",
+                noDownloadOptions: "কোনো ডাউনলোড অপশন নেই",
+                unlockBtn: "ডাউনলোড আনলক করুন",
+                downloadBtn: "ডাউনলোড",
+                views: "ভিউ",
+                status: "স্ট্যাটাস",
+                notificationUnlocked: "ডাউনলোড অপশন আনলক করা হয়েছে!",
+                notificationAdError: "এডস লোড করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।",
+                notificationNetworkError: "নেটওয়ার্ক ত্রুটি। ইন্টারনেট কানেকশন চেক করুন।",
+                notificationSearchError: "সার্চ করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।",
+                language: "বাংলা",
+                customText: "কাস্টম টেক্সট",
+                quality: "গুণমান",
+                languageText: "ভাষা",
+                type: "ধরণ",
+                newServer: "নতুন"
+            }
+        };
+        
+        // App Initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial language
+            setLanguage(currentLanguage);
+            
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            
+            // Load settings and ads
+            loadGlobalSettings();
+            loadAdsConfig();
+            loadSiteConfig();
+            
+            // Load movies
+            loadMovies();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Check Monetag SDK
+            checkMonetagSDK();
+        });
+        
+        // Language Functions
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('movieAppLanguage', lang);
+            
+            const t = translations[lang];
+            
+            // Update all text elements
+            document.getElementById('currentLang').textContent = t.language;
+            document.getElementById('appTitle').textContent = t.appTitle;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('sectionTitle').textContent = t.sectionTitle;
+            document.getElementById('loadingText').textContent = t.loadingMovies;
+            document.getElementById('loadMoreText').textContent = t.loadMore;
+            document.getElementById('screenshotsTitle').textContent = t.screenshots;
+            document.getElementById('downloadTitle').textContent = t.downloadOptions;
+            document.getElementById('loadingOptions').textContent = t.loadingOptions;
+        }
+        
+        function toggleLanguage() {
+            const newLang = currentLanguage === 'en' ? 'bn' : 'en';
+            setLanguage(newLang);
+            
+            // Reload movies to update language in cards
+            if (document.getElementById('moviesGrid').children.length > 0) {
+                const currentQuery = document.getElementById('searchInput').value;
+                if (currentQuery) {
+                    searchMovies(currentQuery);
+                } else {
+                    loadMovies(true); // Reload without resetting
+                }
+            }
+        }
+        
+        // Check Monetag SDK
+        function checkMonetagSDK() {
+            setTimeout(() => {
+                if (typeof show_31270959 !== 'undefined') {
+                    monetagSDKLoaded = true;
+                    console.log("Monetag SDK loaded successfully");
+                } else {
+                    console.log("Monetag SDK not loaded, retrying...");
+                    checkMonetagSDK();
+                }
+            }, 1000);
+        }
+        
+        // Load Global Settings
+        async function loadGlobalSettings() {
+            try {
+                const settingsDoc = await db.collection('config').doc('settings').get();
+                if (settingsDoc.exists) {
+                    const data = settingsDoc.data();
+                    if (data.DOWNLOAD_BASE_DOMAIN) {
+                        DOWNLOAD_BASE_DOMAIN = data.DOWNLOAD_BASE_DOMAIN;
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading settings:", error);
+            }
+        }
+        
+        // Load Site Config
+        async function loadSiteConfig() {
+            try {
+                const siteConfigDoc = await db.collection('config').doc('siteConfig').get();
+                if (siteConfigDoc.exists) {
+                    const data = siteConfigDoc.data();
+                    siteConfig.siteName = data.siteName || "Movie Hub";
+                    siteConfig.siteLogoUrl = data.siteLogoUrl || "";
+                    siteConfig.showLogo = data.showLogo || false;
+                    siteConfig.placeholderImage = data.placeholderImage || "https://via.placeholder.com/300x450/1a1a2e/ffffff?text=No+Image";
+                    siteConfig.enablePosterBlur = data.enablePosterBlur || false;
+                    siteConfig.blurPercentage = data.blurPercentage || 10;
+                    
+                    updateSiteLogo();
+                    updateBlurSetting();
+                }
+            } catch (error) {
+                console.error("Error loading site config:", error);
+            }
+        }
+        
+        // Update Site Logo
+        function updateSiteLogo() {
+            const logoElement = document.getElementById('siteLogo');
+            const appTitleElement = document.getElementById('appTitle');
+            
+            // Clear existing content
+            logoElement.innerHTML = '';
+            
+            if (siteConfig.showLogo && siteConfig.siteLogoUrl) {
+                // Show logo image
+                const logoImg = document.createElement('img');
+                logoImg.src = siteConfig.siteLogoUrl;
+                logoImg.alt = siteConfig.siteName;
+                logoImg.style.height = '40px';
+                logoImg.style.width = 'auto';
+                logoImg.style.objectFit = 'contain';
+                logoElement.appendChild(logoImg);
+            } else {
+                // Show site name with icon
+                const icon = document.createElement('i');
+                icon.className = 'fas fa-film';
+                icon.style.color = 'var(--highlight)';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = siteConfig.siteName;
+                nameSpan.id = 'appTitle';
+                
+                logoElement.appendChild(icon);
+                logoElement.appendChild(nameSpan);
+            }
+            
+            // Update app title text
+            appTitleElement.textContent = siteConfig.siteName;
+        }
+        
+        // Update Blur Setting
+        function updateBlurSetting() {
+            if (siteConfig.enablePosterBlur) {
+                document.documentElement.style.setProperty('--blur-percent', `${siteConfig.blurPercentage}px`);
+            } else {
+                document.documentElement.style.setProperty('--blur-percent', '0px');
+            }
+        }
+        
+        // Load Ads Config
+        async function loadAdsConfig() {
+            try {
+                const adsDoc = await db.collection('adsConfig').doc('current').get();
+                if (adsDoc.exists) {
+                    const data = adsDoc.data();
+                    adsConfig = {
+                        ads1: data.ads1 || { enabled: true, code: '' },
+                        ads2: data.ads2 || { enabled: true, code: '' },
+                        ads3: data.ads3 || { enabled: true, code: '' },
+                        ads4: data.ads4 || { enabled: true, code: '' },
+                        ads5: data.ads5 || { enabled: true, code: '' },
+                        ads6: data.ads6 || { enabled: true, code: '' }
+                    };
+                    
+                    // Load ads if enabled
+                    loadAds();
+                }
+            } catch (error) {
+                console.error("Error loading ads config:", error);
+            }
+        }
+        
+        // Load Ads
+        function loadAds() {
+            const t = translations[currentLanguage];
+            
+            // Ads 1
+            const ads1Container = document.getElementById('ads1-container');
+            if (adsConfig.ads1.enabled && adsConfig.ads1.code) {
+                ads1Container.style.display = 'block';
+                document.getElementById('ads1').innerHTML = adsConfig.ads1.code;
+            } else {
+                ads1Container.style.display = 'none';
+            }
+            
+            // Ads 2 is loaded dynamically in modal
+        }
+        
+        // Show Random Unlock Ad
+        async function showRandomUnlockAd() {
+            if (!monetagSDKLoaded) {
+                showNotification(translations[currentLanguage].notificationAdError, true);
+                return Promise.reject("SDK not loaded");
+            }
+            
+            const adTypes = ['ads4', 'ads5', 'ads6'];
+            const enabledAds = adTypes.filter(type => adsConfig[type]?.enabled && adsConfig[type]?.code);
+            
+            if (enabledAds.length === 0) {
+                return Promise.resolve();
+            }
+            
+            const randomAd = enabledAds[Math.floor(Math.random() * enabledAds.length)];
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    // Execute the ad code
+                    const adCode = adsConfig[randomAd].code;
+                    
+                    // For Monetag ads, we need to execute the function
+                    if (adCode.includes('show_31270959')) {
+                        if (typeof show_31270959 === 'function') {
+                            // Extract the function call from the code
+                            if (adCode.includes("show_31270959('pop')")) {
+                                show_31270959('pop').then(resolve).catch(reject);
+                            } else if (adCode.includes("show_31270959({")) {
+                                // Extract JSON from the code
+                                const jsonMatch = adCode.match(/show_31270959\(\s*(\{[\s\S]*?\})\s*\)/);
+                                if (jsonMatch) {
+                                    try {
+                                        const settings = eval('(' + jsonMatch[1] + ')');
+                                        show_31270959(settings).then(resolve).catch(reject);
+                                    } catch (e) {
+                                        show_31270959().then(resolve).catch(reject);
+                                    }
+                                } else {
+                                    show_31270959().then(resolve).catch(reject);
+                                }
+                            } else {
+                                show_31270959().then(resolve).catch(reject);
+                            }
+                        } else {
+                            reject("SDK function not available");
+                        }
+                    } else {
+                        // For other ad networks, just execute the code
+                        const script = document.createElement('script');
+                        script.innerHTML = adCode;
+                        document.head.appendChild(script);
+                        setTimeout(resolve, 1000);
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+        
+        // Load Movies
+        async function loadMovies(loadMore = false) {
+            const moviesGrid = document.getElementById('moviesGrid');
+            const t = translations[currentLanguage];
+            
+            if (!loadMore) {
+                moviesGrid.innerHTML = `
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>${t.loadingMovies}</p>
+                    </div>
+                `;
+            }
+            
+            try {
+                let query = db.collection('movies')
+                    .orderBy('createdAt', 'desc')
+                    .limit(10);
+                
+                if (loadMore && lastVisible) {
+                    query = query.startAfter(lastVisible);
+                }
+                
+                const snapshot = await query.get();
+                
+                if (snapshot.empty) {
+                    if (!loadMore) {
+                        moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
+                    }
+                    document.getElementById('loadMoreBtn').disabled = true;
+                    return;
+                }
+                
+                if (!loadMore) {
+                    moviesGrid.innerHTML = '';
+                }
+                
+                let movieCount = 0;
+                snapshot.forEach(doc => {
+                    const movie = doc.data();
+                    movie.id = doc.id;
+                    createMovieCard(movie, movieCount);
+                    movieCount++;
+                });
+                
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                
+                if (snapshot.docs.length < 10) {
+                    document.getElementById('loadMoreBtn').disabled = true;
+                } else {
+                    document.getElementById('loadMoreBtn').disabled = false;
+                }
+                
+            } catch (error) {
+                console.error("Error loading movies:", error);
+                showNotification(t.notificationNetworkError, true);
+            }
+        }
+        
+        // Create Movie Card
+        function createMovieCard(movie, index) {
+            const moviesGrid = document.getElementById('moviesGrid');
+            const t = translations[currentLanguage];
+            
+            // Add Ads 3 after every 5 movies
+            if (index > 0 && index % 5 === 0 && adsConfig.ads3.enabled && adsConfig.ads3.code) {
+                const adContainer = document.createElement('div');
+                adContainer.className = 'ads-section';
+                adContainer.style.gridColumn = '1 / -1';
+                adContainer.innerHTML = `
+                    <div class="ads-container ads-square" id="ads3-${index/5}">
+                        ${adsConfig.ads3.code}
+                    </div>
+                `;
+                moviesGrid.appendChild(adContainer);
+            }
+            
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.dataset.id = movie.id;
+            
+            const posterUrl = movie.imageUrl || siteConfig.placeholderImage;
+            const viewCount = movieViews[movie.id] || 0;
+            
+            // Determine custom badge text
+            let customBadgeText = '';
+            if (movie.info1_custom) {
+                customBadgeText = movie.info1_custom;
+            } else if (movie.isNewPost && isWithinDays(movie.createdAt, 7)) {
+                customBadgeText = 'NEW';
+            } else if (movie.lastUpdated && isWithinDays(movie.lastUpdated, 7)) {
+                customBadgeText = 'UPDATED';
+            }
+            
+            card.innerHTML = `
+                <div class="movie-poster">
+                    <img src="${posterUrl}" alt="${movie.title || 'Movie'}" loading="lazy">
+                    <div class="movie-info-overlay">
+                        ${customBadgeText ? `
+                            <span class="info-badge info-custom">
+                                ${customBadgeText}
+                            </span>
+                        ` : ''}
+                        <span class="info-badge info-quality">
+                            ${movie.info2_quality || 'HD'}
+                        </span>
+                    </div>
+                    ${hasNewServerWithinDays(movie, 7) ? `
+                        <span class="info-badge info-new-server">
+                            ${t.newServer}
+                        </span>
+                    ` : ''}
+                    <div class="movie-info-bottom">
+                        <span class="info-badge info-language">
+                            ${movie.info3_language || t.languageText}
+                        </span>
+                        <span class="info-badge info-type">
+                            ${movie.info4_type || t.type}
+                        </span>
+                    </div>
+                </div>
+                <div class="movie-details">
+                    <h3 class="movie-title">${movie.title || 'Untitled Movie'}</h3>
+                    <div class="movie-meta">
+                        <div class="views-count">
+                            <i class="fas fa-eye"></i>
+                            <span>${viewCount} ${t.views}</span>
+                        </div>
+                        <div class="status">
+                            <i class="fas fa-circle"></i>
+                            <span>${movie.info6_status || 'Online'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            card.addEventListener('click', () => {
+                incrementViewCount(movie.id);
+                openMovieModal(movie);
+            });
+            
+            moviesGrid.appendChild(card);
+        }
+        
+        // Check if within specific days
+        function isWithinDays(timestamp, days) {
+            if (!timestamp) return false;
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diffTime = Math.abs(now - date);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= days;
+        }
+        
+        // Check if has new server within days
+        function hasNewServerWithinDays(movie, days) {
+            if (!movie.downloadOptions || !movie.serverAddedDate) return false;
+            
+            // Check serverAddedDate for new servers
+            const serverDate = movie.serverAddedDate;
+            if (Array.isArray(serverDate)) {
+                for (const date of serverDate) {
+                    if (isWithinDays(date, days)) {
+                        return true;
+                    }
+                }
+            } else if (isWithinDays(serverDate, days)) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Increment View Count (Once per day per movie)
+        function incrementViewCount(movieId) {
+            const today = new Date().toDateString();
+            
+            // Initialize daily views if not exists
+            if (!dailyViews[today]) {
+                dailyViews[today] = {};
+            }
+            
+            // Check if already viewed today
+            if (!dailyViews[today][movieId]) {
+                // Increment total view count
+                movieViews[movieId] = (movieViews[movieId] || 0) + 1;
+                
+                // Mark as viewed today
+                dailyViews[today][movieId] = true;
+                
+                // Save to localStorage
+                localStorage.setItem('movieViews', JSON.stringify(movieViews));
+                localStorage.setItem('dailyViews', JSON.stringify(dailyViews));
+                
+                // Update UI
+                updateViewCountUI(movieId);
+            }
+        }
+        
+        // Update View Count UI
+        function updateViewCountUI(movieId) {
+            const card = document.querySelector(`.movie-card[data-id="${movieId}"]`);
+            if (card) {
+                const viewsCountElement = card.querySelector('.views-count span');
+                if (viewsCountElement) {
+                    const t = translations[currentLanguage];
+                    viewsCountElement.textContent = `${movieViews[movieId]} ${t.views}`;
+                }
+            }
+        }
+        
+        // Open Movie Modal with New UI
+        function openMovieModal(movie) {
+            currentMovieId = movie.id;
+            const t = translations[currentLanguage];
+            
+            // Set modal title and subtitle
+            document.getElementById('modalMovieTitle').textContent = movie.title || 'Untitled Movie';
+            
+            // Set subtitle (info2_quality + info4_type)
+            const subtitle = (movie.info2_quality || 'WEB-DL') + ' | ' + (movie.info4_type || 'Movie');
+            document.getElementById('modalMovieSubtitle').textContent = subtitle;
+            
+            // Set Type, Language, Quality in header
+            document.getElementById('modalTypeValue').textContent = movie.info4_type || 'Movie';
+            document.getElementById('modalLanguageValue').textContent = movie.info3_language || 'Dual [Hindi–Tamil]';
+            document.getElementById('modalQualityValue').textContent = movie.info2_quality || 'WEB-DL';
+            
+            // Set detailed information with fallback to "N/A"
+            document.getElementById('modalIMDb').textContent = movie.imdb || 'N/A';
+            document.getElementById('modalGenre').textContent = movie.genre || 'N/A';
+            document.getElementById('modalLanguageDetail').textContent = movie.info3_language || 'N/A';
+            document.getElementById('modalQualityDetail').textContent = movie.info2_quality || 'N/A';
+            document.getElementById('modalResolution').textContent = movie.resolution || 'N/A';
+            document.getElementById('modalReleased').textContent = movie.released || 'N/A';
+            document.getElementById('modalCast').textContent = movie.cast || 'N/A';
+            document.getElementById('modalStoryline').textContent = movie.storyline || 'No storyline available.';
+            
+            // Load screenshots
+            const screenshotsWrapper = document.getElementById('screenshotsWrapper');
+            screenshotsWrapper.innerHTML = '';
+            
+            if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
+                movie.screenshotLinks.forEach(link => {
+                    const slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
+                    slide.innerHTML = `<img src="${link}" alt="Screenshot" loading="lazy">`;
+                    screenshotsWrapper.appendChild(slide);
+                });
+            } else {
+                screenshotsWrapper.innerHTML = `
+                    <div class="swiper-slide" style="display: flex; align-items: center; justify-content: center; background: #0f172a;">
+                        <p>${t.noDownloadOptions}</p>
+                    </div>
+                `;
+            }
+            
+            // Load Ads 2 in modal
+            const ads2Container = document.getElementById('ads2-container');
+            if (adsConfig.ads2.enabled && adsConfig.ads2.code) {
+                ads2Container.style.display = 'block';
+                document.getElementById('ads2').innerHTML = adsConfig.ads2.code;
+            } else {
+                ads2Container.style.display = 'none';
+            }
+            
+            // Load download options
+            loadDownloadOptions(movie);
+            
+            // Show modal
+            document.getElementById('movieModal').style.display = 'flex';
+            
+            // Initialize Swiper
+            setTimeout(() => {
+                new Swiper('#screenshotsSwiper', {
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    loop: true,
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false,
+                    },
+                });
+            }, 100);
+        }
+        
+        // Load Download Options
+        function loadDownloadOptions(movie) {
+            const downloadOptionsContainer = document.getElementById('downloadOptions');
+            const t = translations[currentLanguage];
+            
+            const isUnlocked = unlockedMovies[movie.id] || false;
+            
+            if (!movie.downloadOptions || movie.downloadOptions.length === 0) {
+                downloadOptionsContainer.innerHTML = `<p class="loading">${t.noDownloadOptions}</p>`;
+                return;
+            }
+            
+            let html = '';
+            
+            movie.downloadOptions.forEach((server, serverIndex) => {
+                const isNewServer = checkIfNewServer(movie, serverIndex);
+                
+                html += `
+                    <div class="download-server">
+                        <div class="server-title">
+                            <i class="fas fa-server"></i>
+                            <span>${server.server || 'Server'}</span>
+                            ${isNewServer ? `<span class="new-server-badge">${t.newServer}</span>` : ''}
+                        </div>
+                        <div class="quality-options">
+                `;
+                
+                server.qualities.forEach((quality, qualityIndex) => {
+                    const optionId = `option_${movie.id}_${serverIndex}_${qualityIndex}`;
+                    
+                    html += `
+                        <div class="quality-option ${isUnlocked ? 'unlocked' : 'locked'}" id="${optionId}">
+                            <div class="quality-text">${quality.quality_text || 'Quality'}</div>
+                            ${isUnlocked ? `
+                                <a href="${DOWNLOAD_BASE_DOMAIN}${quality.path || '#'}" 
+                                   class="download-btn" 
+                                   target="_blank">
+                                    <i class="fas fa-download"></i> ${t.downloadBtn}
+                                </a>
+                            ` : `
+                                <button class="unlock-btn" onclick="unlockDownloadOptions('${movie.id}')">
+                                    <i class="fas fa-lock"></i> ${t.unlockBtn}
+                                </button>
+                            `}
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            downloadOptionsContainer.innerHTML = html;
+        }
+        
+        // Check if server is new
+        function checkIfNewServer(movie, serverIndex) {
+            if (!movie.serverAddedDate) return false;
+            
+            if (Array.isArray(movie.serverAddedDate)) {
+                return movie.serverAddedDate[serverIndex] && isWithinDays(movie.serverAddedDate[serverIndex], 7);
+            } else {
+                return serverIndex === 0 && isWithinDays(movie.serverAddedDate, 7);
+            }
+        }
+        
+        // Unlock Download Options
+        async function unlockDownloadOptions(movieId) {
+            const t = translations[currentLanguage];
+            
+            try {
+                await showRandomUnlockAd();
+                
+                unlockedMovies[movieId] = true;
+                sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
+                
+                // Unlock all options for this movie
+                document.querySelectorAll('.quality-option.locked').forEach(option => {
+                    option.classList.remove('locked');
+                    option.classList.add('unlocked');
+                    
+                    const qualityText = option.querySelector('.quality-text').textContent;
+                    option.innerHTML = `
+                        <div class="quality-text">${qualityText}</div>
+                        <button class="download-btn" onclick="generateDownloadLink(this, '${movieId}', '${qualityText}')">
+                            <i class="fas fa-download"></i> ${t.downloadBtn}
+                        </button>
+                    `;
+                });
+                
+                showNotification(t.notificationUnlocked);
+                
+            } catch (error) {
+                console.error("Error showing ad:", error);
+                showNotification(t.notificationAdError, true);
+            }
+        }
+        
+        // Generate Download Link
+        async function generateDownloadLink(button, movieId, qualityText) {
+            try {
+                const movieDoc = await db.collection('movies').doc(movieId).get();
+                if (!movieDoc.exists) {
+                    showNotification("Movie not found", true);
+                    return;
+                }
+                
+                const movie = movieDoc.data();
+                let downloadPath = '';
+                
+                if (movie.downloadOptions) {
+                    for (const server of movie.downloadOptions) {
+                        for (const quality of server.qualities) {
+                            if (quality.quality_text === qualityText) {
+                                downloadPath = quality.path;
+                                break;
+                            }
+                        }
+                        if (downloadPath) break;
+                    }
+                }
+                
+                if (downloadPath) {
+                    const fullUrl = DOWNLOAD_BASE_DOMAIN + downloadPath;
+                    window.open(fullUrl, '_blank');
+                } else {
+                    showNotification("Download link not found", true);
+                }
+                
+            } catch (error) {
+                console.error("Error generating download link:", error);
+                showNotification("Error generating download link", true);
+            }
+        }
+        
+        // Search Movies
+        function searchMovies(query) {
+            const moviesGrid = document.getElementById('moviesGrid');
+            const t = translations[currentLanguage];
+            
+            moviesGrid.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>${t.loadingMovies}</p>
+                </div>
+            `;
+            
+            db.collection('movies')
+                .where('title', '>=', query)
+                .where('title', '<=', query + '\uf8ff')
+                .limit(20)
+                .get()
+                .then(snapshot => {
+                    moviesGrid.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
+                        return;
+                    }
+                    
+                    let movieCount = 0;
+                    snapshot.forEach(doc => {
+                        const movie = doc.data();
+                        movie.id = doc.id;
+                        createMovieCard(movie, movieCount);
+                        movieCount++;
+                    });
+                    
+                    document.getElementById('loadMoreContainer').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error("Search error:", error);
+                    showNotification(t.notificationSearchError, true);
+                });
+        }
+        
+        // Setup Event Listeners
+        function setupEventListeners() {
+            // Language toggle
+            document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+            
+            // Search input
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+                
+                if (query.length === 0) {
+                    lastVisible = null;
+                    loadMovies();
+                    document.getElementById('loadMoreContainer').style.display = 'block';
+                    return;
+                }
+                
+                if (query.length < 2) return;
+                
+                searchTimeout = setTimeout(() => {
+                    searchMovies(query);
+                }, 500);
+            });
+            
+            // Load more button
+            document.getElementById('loadMoreBtn').addEventListener('click', function() {
+                loadMovies(true);
+            });
+            
+            // Close modal
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('movieModal').style.display = 'none';
+            });
+            
+            // Close modal on outside click
+            document.getElementById('movieModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+        }
+        
+        // Show Notification
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            
+            if (isError) {
+                notification.classList.add('error');
+            } else {
+                notification.classList.remove('error');
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Global functions for HTML access
+        window.unlockDownloadOptions = unlockDownloadOptions;
+        window.generateDownloadLink = generateDownloadLink;
+    </script>
+</body>
+</html>
