@@ -1145,10 +1145,7 @@
             ads3: { enabled: true, code: '' },
             ads4: { enabled: true, code: '' },
             ads5: { enabled: true, code: '' },
-            ads6: { enabled: true, code: '' },
-            adSlot1: { enabled: true, code: '' },
-            adSlot2: { enabled: true, code: '' },
-            adSlot3: { enabled: true, code: '' }
+            ads6: { enabled: true, code: '' }
         };
         let monetagSDKLoaded = false;
         let currentLanguage = localStorage.getItem('movieAppLanguage') || 'en';
@@ -1193,7 +1190,7 @@
                 languageText: "Language",
                 type: "Type",
                 newServer: "New",
-                // New translations from 
+                // New translations from filedownloader.html
                 unlock_button: "Unlock ({adCount}/{requiredCount})",
                 download_now_button: "Download Now",
                 toast_download_starting: "Your download is starting...",
@@ -1228,7 +1225,7 @@
                 languageText: "ভাষা",
                 type: "ধরণ",
                 newServer: "নতুন",
-                // New translations from 
+                // New translations from filedownloader.html
                 unlock_button: "আনলক করুন ({adCount}/{requiredCount})",
                 download_now_button: "এখনই ডাউনলোড করুন",
                 toast_download_starting: "আপনার ডাউনলোড শুরু হচ্ছে...",
@@ -1320,9 +1317,9 @@
         // Check Monetag SDK
         function checkMonetagSDK() {
             setTimeout(() => {
-                if (typeof show_31270959 !== 'undefined' && typeof show_10316324 !== 'undefined') {
+                if (typeof show_10316324 !== 'undefined') {
                     monetagSDKLoaded = true;
-                    console.log("Monetag SDKs loaded successfully");
+                    console.log("Monetag SDK loaded successfully");
                 } else {
                     console.log("Monetag SDK not loaded, retrying...");
                     checkMonetagSDK();
@@ -1444,46 +1441,53 @@
             appTitleElement.textContent = siteConfig.siteName;
         }
         
-        // Load Ads Config
+        // Load Ads Config - FIXED VERSION
         async function loadAdsConfig() {
             try {
                 const adsDoc = await db.collection('adsConfig').doc('current').get();
                 if (adsDoc.exists) {
                     const data = adsDoc.data();
+                    // Use the correct field names from your Firebase
                     adsConfig = {
                         ads1: data.ads1 || { enabled: true, code: '' },
                         ads2: data.ads2 || { enabled: true, code: '' },
                         ads3: data.ads3 || { enabled: true, code: '' },
                         ads4: data.ads4 || { enabled: true, code: '' },
                         ads5: data.ads5 || { enabled: true, code: '' },
-                        ads6: data.ads6 || { enabled: true, code: '' },
-                        adSlot1: data.adSlot1 || { enabled: true, code: '' },
-                        adSlot2: data.adSlot2 || { enabled: true, code: '' },
-                        adSlot3: data.adSlot3 || { enabled: true, code: '' }
+                        ads6: data.ads6 || { enabled: true, code: '' }
                     };
+                    
+                    console.log("Loaded ads config:", adsConfig);
                     
                     // Load ads if enabled
                     loadAds();
+                } else {
+                    console.log("No ads config found, using defaults");
+                    loadAds(); // Load with default empty ads
                 }
             } catch (error) {
                 console.error("Error loading ads config:", error);
+                loadAds(); // Load with default empty ads even on error
             }
         }
         
-        // Load Ads
+        // Load Ads - FIXED VERSION
         function loadAds() {
             const t = translations[currentLanguage];
             
-            // Ads 1
+            // Ads 1 - Header Banner
             const ads1Container = document.getElementById('ads1-container');
-            if (adsConfig.adSlot1 && adsConfig.adSlot1.enabled && adsConfig.adSlot1.code) {
+            if (adsConfig.ads1 && adsConfig.ads1.enabled && adsConfig.ads1.code) {
                 ads1Container.style.display = 'block';
-                document.getElementById('ads1').innerHTML = adsConfig.adSlot1.code;
+                document.getElementById('ads1').innerHTML = adsConfig.ads1.code;
+                console.log("Loaded Ads 1");
             } else {
                 ads1Container.style.display = 'none';
+                console.log("Ads 1 disabled or no code");
             }
             
             // Ads 2 is loaded dynamically in modal
+            console.log("Ads config loaded successfully");
         }
         
         // Show Unlock Ad (Using SDK)
@@ -1786,13 +1790,15 @@
                 screenshotsSection.style.display = 'none';
             }
             
-            // Load Ads 2 in modal
+            // Load Ads 2 in modal - FIXED
             const ads2Container = document.getElementById('ads2-container');
-            if (adsConfig.ads2.enabled && adsConfig.ads2.code) {
+            if (adsConfig.ads2 && adsConfig.ads2.enabled && adsConfig.ads2.code) {
                 ads2Container.style.display = 'block';
                 document.getElementById('ads2').innerHTML = adsConfig.ads2.code;
+                console.log("Loaded Ads 2 in modal");
             } else {
                 ads2Container.style.display = 'none';
+                console.log("Ads 2 disabled or no code");
             }
             
             // Load download options
@@ -2106,4 +2112,4 @@
         window.toggleLanguage = toggleLanguage;
     </script>
 </body>
-</html>
+    </html>
