@@ -31,7 +31,6 @@
             --text-secondary: #b8b8b8;
             --card-bg: #0f172a;
             --border: #2d3748;
-            --blur-percent: 0%;
         }
         
         body {
@@ -155,14 +154,12 @@
             margin: 15px auto;
             max-width: 1200px;
             text-align: center;
+            display: none;
         }
         
         .ads-container {
             overflow: hidden;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            min-height: 90px;
         }
         
         .ads-banner {
@@ -183,136 +180,6 @@
             width: 300px;
             height: 250px;
             margin: 15px auto;
-        }
-        
-        /* Professional Ad Containers */
-        .ad-top-banner {
-            width: 100%;
-            max-width: 728px;
-            height: 90px;
-            margin: 10px auto;
-        }
-        
-        .ad-middle-banner {
-            width: 100%;
-            max-width: 728px;
-            height: 90px;
-            margin: 20px auto;
-        }
-        
-        .ad-footer-banner {
-            width: 100%;
-            max-width: 728px;
-            height: 90px;
-            margin: 20px auto;
-        }
-        
-        .ad-interstitial-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .ad-interstitial-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 90%;
-            max-height: 90%;
-            overflow-y: auto;
-            text-align: center;
-            position: relative;
-        }
-        
-        .ad-interstitial-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--highlight);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ad-interstitial-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: var(--highlight);
-        }
-        
-        .ad-interstitial-container {
-            width: 100%;
-            min-height: 300px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .ad-interstitial-action {
-            background: linear-gradient(to right, var(--accent), var(--highlight));
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-        }
-        
-        .ad-interstitial-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
-        }
-        
-        /* Ad-block Detection */
-        .ad-block-warning {
-            background: linear-gradient(to right, #f59e0b, #d97706);
-            color: white;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin: 20px auto;
-            max-width: 800px;
-            text-align: center;
-            display: none;
-        }
-        
-        .ad-block-warning i {
-            margin-right: 10px;
-        }
-        
-        /* Empty Ad Placeholder */
-        .ad-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-        
-        .ad-placeholder i {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--text-secondary);
         }
         
         /* Main Content */
@@ -383,11 +250,32 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
-            filter: blur(var(--blur-percent));
         }
         
         .movie-card:hover .movie-poster img {
             transform: scale(1.05);
+        }
+        
+        /* Blur overlay with text */
+        .blur-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        .blur-text {
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            text-align: center;
         }
         
         .movie-info-overlay {
@@ -399,7 +287,7 @@
             display: flex;
             justify-content: space-between;
             background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            z-index: 2;
+            z-index: 3;
         }
         
         .info-badge {
@@ -425,7 +313,7 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            z-index: 3;
+            z-index: 4;
             font-size: 0.6rem;
             padding: 2px 6px;
         }
@@ -439,7 +327,7 @@
             display: flex;
             justify-content: space-between;
             background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            z-index: 2;
+            z-index: 3;
         }
         
         .info-language {
@@ -855,26 +743,46 @@
             box-shadow: 0 5px 10px rgba(16, 185, 129, 0.3);
         }
         
-        /* Unlock Button */
+        /* Unlock Button - New Style */
         .unlock-btn {
             display: inline-block;
             background: linear-gradient(to right, #f59e0b, #ef4444);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             margin-top: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
             width: 100%;
+            position: relative;
+            overflow: hidden;
         }
         
         .unlock-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 10px rgba(245, 158, 11, 0.3);
+        }
+        
+        .unlock-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .unlock-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Timer Progress Indicator */
+        .timer-progress {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            color: var(--text-secondary);
+            text-align: center;
         }
         
         /* Loading State */
@@ -986,13 +894,6 @@
             .details-list {
                 grid-template-columns: 1fr;
             }
-            
-            /* Professional Ads Responsive */
-            .ad-top-banner,
-            .ad-middle-banner,
-            .ad-footer-banner {
-                height: 70px;
-            }
         }
         
         @media (max-width: 480px) {
@@ -1035,13 +936,6 @@
             .info-value {
                 font-size: 1rem;
             }
-            
-            /* Professional Ads Responsive */
-            .ad-top-banner,
-            .ad-middle-banner,
-            .ad-footer-banner {
-                height: 60px;
-            }
         }
         
         @media (max-width: 360px) {
@@ -1064,20 +958,9 @@
         </button>
     </div>
     
-    <!-- Ad Block Warning -->
-    <div class="ad-block-warning" id="adBlockWarning">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span>Ad blocker detected. Please disable ad blocker to support our site.</span>
-    </div>
-    
-    <!-- Top Banner Ad -->
-    <div class="ads-section">
-        <div class="ads-container ad-top-banner" id="adTopBanner">
-            <div class="ad-placeholder" id="adTopPlaceholder">
-                <i class="fas fa-ad"></i>
-                <span>Advertisement</span>
-            </div>
-        </div>
+    <!-- Ads 1: Banner Ads -->
+    <div id="ads1-container" class="ads-section">
+        <div class="ads-container ads-banner" id="ads1"></div>
     </div>
     
     <!-- Header -->
@@ -1097,16 +980,6 @@
     
     <!-- Main Content -->
     <div class="container">
-        <!-- Middle Banner Ad -->
-        <div class="ads-section">
-            <div class="ads-container ad-middle-banner" id="adMiddleBanner">
-                <div class="ad-placeholder" id="adMiddlePlaceholder">
-                    <i class="fas fa-ad"></i>
-                    <span>Advertisement</span>
-                </div>
-            </div>
-        </div>
-        
         <h2 class="section-title">
             <i class="fas fa-fire"></i>
             <span id="sectionTitle">Popular Movies</span>
@@ -1125,34 +998,6 @@
             <button class="load-more-btn" id="loadMoreBtn">
                 <i class="fas fa-plus"></i>
                 <span id="loadMoreText">Load More</span>
-            </button>
-        </div>
-    </div>
-    
-    <!-- Footer Banner Ad -->
-    <div class="ads-section">
-        <div class="ads-container ad-footer-banner" id="adFooterBanner">
-            <div class="ad-placeholder" id="adFooterPlaceholder">
-                <i class="fas fa-ad"></i>
-                <span>Advertisement</span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Interstitial Ad Overlay -->
-    <div class="ad-interstitial-overlay" id="interstitialOverlay">
-        <div class="ad-interstitial-content">
-            <button class="ad-interstitial-close" id="closeInterstitial">&times;</button>
-            <h3 class="ad-interstitial-title">Watch Ad to Continue</h3>
-            <div class="ad-interstitial-container" id="interstitialContainer">
-                <div class="ad-placeholder">
-                    <i class="fas fa-ad"></i>
-                    <span>Loading Ad...</span>
-                </div>
-            </div>
-            <p>Please watch the ad to unlock the content</p>
-            <button class="ad-interstitial-action" id="continueAfterAd" style="display: none;">
-                Continue
             </button>
         </div>
     </div>
@@ -1177,7 +1022,7 @@
                         </div>
                         <div class="info-col">
                             <span class="info-label">Language:</span>
-                            <span class="info-value language-value" id="modalLanguageValue">Dual [Hindi–Tamil]</span>
+                            <span class="info-value language-value" id="modalLanguageValue">Dual [Hindi-Tamil]</span>
                         </div>
                         <div class="info-col">
                             <span class="info-label">Quality:</span>
@@ -1186,8 +1031,8 @@
                     </div>
                 </div>
                 
-                <!-- Screenshots Section -->
-                <div class="screenshots-section">
+                <!-- Screenshots Section (Will be hidden if no screenshots) -->
+                <div class="screenshots-section" id="screenshotsSection" style="display: none;">
                     <h4 class="section-subtitle">
                         <i class="fas fa-images"></i>
                         <span id="screenshotsTitle">Screenshots</span>
@@ -1274,335 +1119,37 @@
     
     <!-- Firebase Configuration -->
     <script>
-        // ============================================
-        // PROFESSIONAL ADS SYSTEM CONFIGURATION
-        // ============================================
-        
-        // Active Ad Network (Change to 'monetag' to use Monetag)
-        const ACTIVE_AD_NETWORK = "adsterra";
-        
-        // Global ads configuration (will be loaded from Firebase)
-        let ADS_CONFIG = {
-            adsterra: {
-                bannerTop: { enabled: true, code: '' },
-                bannerMiddle: { enabled: true, code: '' },
-                bannerFooter: { enabled: true, code: '' },
-                interstitial: { enabled: true, code: '' }
-            },
-            monetag: {
-                bannerTop: { enabled: true, code: '' },
-                bannerMiddle: { enabled: true, code: '' },
-                bannerFooter: { enabled: true, code: '' },
-                interstitial: { enabled: true, code: '' }
-            }
-        };
-        
-        // ============================================
-        // ADS SYSTEM FUNCTIONS
-        // ============================================
-        
-        /**
-         * Safely inject ad HTML and execute scripts
-         * @param {string} containerId - ID of the container element
-         * @param {string} adCode - HTML code with scripts for the ad
-         */
-        function renderAd(containerId, adCode) {
-            const container = document.getElementById(containerId);
-            if (!container) {
-                console.error(`Container ${containerId} not found`);
-                return false;
-            }
-            
-            // Clear container
-            container.innerHTML = '';
-            
-            // If no ad code or empty code, show placeholder
-            if (!adCode || adCode.trim() === '') {
-                const placeholder = document.getElementById(containerId.replace('Banner', 'Placeholder'));
-                if (placeholder) {
-                    container.appendChild(placeholder.cloneNode(true));
-                }
-                return false;
-            }
-            
-            try {
-                // Create a temporary div to parse the HTML
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = adCode;
-                
-                // Extract scripts
-                const scripts = tempDiv.querySelectorAll('script');
-                
-                // Add non-script content first
-                const fragment = document.createDocumentFragment();
-                tempDiv.childNodes.forEach(node => {
-                    if (node.nodeName !== 'SCRIPT') {
-                        fragment.appendChild(node.cloneNode(true));
-                    }
-                });
-                container.appendChild(fragment);
-                
-                // Execute scripts safely
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    
-                    // Copy all attributes
-                    Array.from(script.attributes).forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                    });
-                    
-                    // Handle inline scripts
-                    if (!script.src && script.textContent) {
-                        newScript.textContent = script.textContent;
-                    }
-                    
-                    // Add to head for execution
-                    document.head.appendChild(newScript);
-                    
-                    // Remove after execution (for inline scripts)
-                    if (!script.src) {
-                        setTimeout(() => {
-                            if (newScript.parentNode) {
-                                newScript.parentNode.removeChild(newScript);
-                            }
-                        }, 1000);
-                    }
-                });
-                
-                return true;
-            } catch (error) {
-                console.error('Error rendering ad:', error);
-                // Show placeholder on error
-                const placeholder = document.getElementById(containerId.replace('Banner', 'Placeholder'));
-                if (placeholder) {
-                    container.innerHTML = '';
-                    container.appendChild(placeholder.cloneNode(true));
-                }
-                return false;
-            }
-        }
-        
-        /**
-         * Load ads configuration from Firebase
-         */
-        async function loadAdsConfigFromFirebase() {
-            try {
-                const adsDoc = await db.collection('adsConfig').doc('current').get();
-                
-                if (adsDoc.exists) {
-                    const data = adsDoc.data();
-                    
-                    // Update Adsterra config
-                    if (data.adsterra) {
-                        ADS_CONFIG.adsterra = {
-                            bannerTop: data.adsterra.bannerTop || { enabled: true, code: '' },
-                            bannerMiddle: data.adsterra.bannerMiddle || { enabled: true, code: '' },
-                            bannerFooter: data.adsterra.bannerFooter || { enabled: true, code: '' },
-                            interstitial: data.adsterra.interstitial || { enabled: true, code: '' }
-                        };
-                    }
-                    
-                    // Update Monetag config
-                    if (data.monetag) {
-                        ADS_CONFIG.monetag = {
-                            bannerTop: data.monetag.bannerTop || { enabled: true, code: '' },
-                            bannerMiddle: data.monetag.bannerMiddle || { enabled: true, code: '' },
-                            bannerFooter: data.monetag.bannerFooter || { enabled: true, code: '' },
-                            interstitial: data.monetag.interstitial || { enabled: true, code: '' }
-                        };
-                    }
-                    
-                    console.log('Ads config loaded from Firebase');
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error loading ads config from Firebase:', error);
-            }
-            
-            return false;
-        }
-        
-        /**
-         * Load all banner ads based on active network
-         */
-        async function loadBannerAds() {
-            const network = ADS_CONFIG[ACTIVE_AD_NETWORK];
-            
-            if (!network) {
-                console.error('Invalid ad network:', ACTIVE_AD_NETWORK);
-                return;
-            }
-            
-            // Load top banner
-            if (network.bannerTop.enabled && network.bannerTop.code) {
-                const success = renderAd('adTopBanner', network.bannerTop.code);
-                if (!success) {
-                    console.log('Failed to load top banner ad');
-                }
-            } else {
-                console.log('Top banner ad disabled or no code');
-            }
-            
-            // Load middle banner
-            if (network.bannerMiddle.enabled && network.bannerMiddle.code) {
-                const success = renderAd('adMiddleBanner', network.bannerMiddle.code);
-                if (!success) {
-                    console.log('Failed to load middle banner ad');
-                }
-            } else {
-                console.log('Middle banner ad disabled or no code');
-            }
-            
-            // Load footer banner
-            if (network.bannerFooter.enabled && network.bannerFooter.code) {
-                const success = renderAd('adFooterBanner', network.bannerFooter.code);
-                if (!success) {
-                    console.log('Failed to load footer banner ad');
-                }
-            } else {
-                console.log('Footer banner ad disabled or no code');
-            }
-            
-            console.log(`Banner ads loaded from ${ACTIVE_AD_NETWORK}`);
-        }
-        
-        /**
-         * Show interstitial ad with callback
-         * @param {Function} onComplete - Callback function after ad is viewed
-         */
-        async function showInterstitialAd(onComplete) {
-            const network = ADS_CONFIG[ACTIVE_AD_NETWORK];
-            const overlay = document.getElementById('interstitialOverlay');
-            const container = document.getElementById('interstitialContainer');
-            const continueBtn = document.getElementById('continueAfterAd');
-            
-            // Reset state
-            continueBtn.style.display = 'none';
-            container.innerHTML = '<div class="ad-placeholder"><i class="fas fa-ad"></i><span>Loading Ad...</span></div>';
-            
-            // Check if interstitial is enabled and has code
-            if (!network.interstitial.enabled || !network.interstitial.code) {
-                showNotification('Ad not available. Please try again later.', true);
-                return;
-            }
-            
-            // Load interstitial ad
-            const success = renderAd('interstitialContainer', network.interstitial.code);
-            
-            if (!success) {
-                showNotification('Failed to load ad. Please try again.', true);
-                return;
-            }
-            
-            // Show overlay
-            overlay.style.display = 'flex';
-            
-            // Handle continue button
-            continueBtn.onclick = function() {
-                overlay.style.display = 'none';
-                if (typeof onComplete === 'function') {
-                    onComplete();
-                }
-            };
-            
-            // For Adsterra, automatically show continue button after a delay
-            if (ACTIVE_AD_NETWORK === 'adsterra') {
-                setTimeout(() => {
-                    continueBtn.style.display = 'block';
-                }, 5000); // Show continue button after 5 seconds
-            }
-            
-            // For Monetag, handle the promise
-            if (ACTIVE_AD_NETWORK === 'monetag' && typeof show_10316324 === 'function') {
-                try {
-                    await show_10316324('pop');
-                    continueBtn.style.display = 'block';
-                } catch (error) {
-                    console.error('Monetag ad error:', error);
-                    continueBtn.style.display = 'block'; // Show continue anyway
-                }
-            }
-        }
-        
-        /**
-         * Check if ad blocker is active
-         */
-        function detectAdBlock() {
-            const testAd = document.createElement('div');
-            testAd.innerHTML = '&nbsp;';
-            testAd.className = 'adsbygoogle';
-            testAd.style.cssText = 'position:absolute;top:-100px;left:-100px;width:1px;height:1px;overflow:hidden;opacity:0;';
-            document.body.appendChild(testAd);
-            
-            setTimeout(() => {
-                const isBlocked = testAd.offsetHeight === 0 || 
-                                 testAd.offsetWidth === 0 ||
-                                 window.getComputedStyle(testAd).display === 'none';
-                
-                if (isBlocked) {
-                    document.getElementById('adBlockWarning').style.display = 'block';
-                }
-                
-                document.body.removeChild(testAd);
-            }, 100);
-        }
-        
-        /**
-         * Initialize ads system
-         */
-        async function initAdsSystem() {
-            // Detect ad blocker
-            detectAdBlock();
-            
-            // Load ads config from Firebase
-            await loadAdsConfigFromFirebase();
-            
-            // Load banner ads
-            await loadBannerAds();
-            
-            // Setup interstitial close button
-            document.getElementById('closeInterstitial').onclick = function() {
-                document.getElementById('interstitialOverlay').style.display = 'none';
-            };
-            
-            // Hide placeholder after ads load
-            setTimeout(() => {
-                const placeholders = document.querySelectorAll('.ad-placeholder');
-                placeholders.forEach(placeholder => {
-                    if (placeholder.parentElement && placeholder.parentElement.innerHTML.includes('ad-placeholder')) {
-                        // Only hide if still showing placeholder (ad didn't load)
-                        placeholder.style.opacity = '0.5';
-                    }
-                });
-            }, 3000);
-            
-            console.log('Ads system initialized with network:', ACTIVE_AD_NETWORK);
-        }
-        
-        // ============================================
-        // EXISTING MOVIE APP CODE
-        // ============================================
-        
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyDhbzGAqcgaNaXOSZamSOYwyPbNHZJj4dg",
-            authDomain: "e-m-saim-gang.firebaseapp.com",
-            databaseURL: "https://e-m-saim-gang-default-rtdb.firebaseio.com",
-            projectId: "e-m-saim-gang",
-            storageBucket: "e-m-saim-gang.appspot.com",
-            messagingSenderId: "741683411554",
-            appId: "1:741683411554:web:5af8c6baa90de7d3e6ef3b",
-            measurementId: "G-9GGQCTQDJB"
+            apiKey: "AIzaSyA2z-TDbCBJRsF-68EB53Dxvt5usagUJ3k",
+            authDomain: "movie-sites-d24a9.firebaseapp.com",
+            databaseURL: "https://movie-sites-d24a9-default-rtdb.firebaseio.com",
+            projectId: "movie-sites-d24a9",
+            storageBucket: "movie-sites-d24a9.firebasestorage.app",
+            messagingSenderId: "984858976194",
+            appId: "1:984858976194:web:9301de242575007366005b",
+            measurementId: "G-RF1LJW420T"
         };
         
         // Global Variables
         let db;
         let lastVisible = null;
-        let DOWNLOAD_BASE_DOMAIN = "https://www.example.com";
+        let downloadDomains = [];
         let unlockedMovies = JSON.parse(sessionStorage.getItem('unlockedMovies') || '{}');
         let currentMovieId = null;
         let movieViews = JSON.parse(localStorage.getItem('movieViews') || '{}');
         let dailyViews = JSON.parse(localStorage.getItem('dailyViews') || '{}');
+        let adsConfig = {
+            ads1: { enabled: true, code: '' },
+            ads2: { enabled: true, code: '' },
+            ads3: { enabled: true, code: '' },
+            ads4: { enabled: true, code: '' },
+            ads5: { enabled: true, code: '' },
+            ads6: { enabled: true, code: '' },
+            adSlot1: { enabled: true, code: '' },
+            adSlot2: { enabled: true, code: '' },
+            adSlot3: { enabled: true, code: '' }
+        };
         let monetagSDKLoaded = false;
         let currentLanguage = localStorage.getItem('movieAppLanguage') || 'en';
         let siteConfig = {
@@ -1613,6 +1160,11 @@
             enablePosterBlur: false,
             blurPercentage: 10
         };
+        
+        // New variables for ad unlock system 
+        let timerDuration = 10; // Default wait time in seconds
+        let requiredAds = 3; // Default required ads count
+        let adCounts = JSON.parse(localStorage.getItem('adCounts') || '{}');
         
         // Translations
         const translations = {
@@ -1627,7 +1179,7 @@
                 downloadOptions: "Download Options",
                 loadingOptions: "Loading download options...",
                 noDownloadOptions: "No download options available",
-                unlockBtn: "Watch Ad to Unlock",
+                unlockBtn: "Unlock to Download",
                 downloadBtn: "Download",
                 views: "views",
                 status: "status",
@@ -1640,7 +1192,16 @@
                 quality: "Quality",
                 languageText: "Language",
                 type: "Type",
-                newServer: "New"
+                newServer: "New",
+                // New translations from 
+                unlock_button: "Unlock ({adCount}/{requiredCount})",
+                download_now_button: "Download Now",
+                toast_download_starting: "Your download is starting...",
+                toast_progress: "Progress: {adCount}/{requiredCount}",
+                toast_unlocked: "Download unlocked!",
+                toast_ad_error: "Could not load ad. Please try again.",
+                loading_ad: "Loading ad...",
+                verifying_button: "Please wait {countdown}s"
             },
             bn: {
                 appTitle: "মুভি হাব",
@@ -1653,7 +1214,7 @@
                 downloadOptions: "ডাউনলোড অপশন",
                 loadingOptions: "ডাউনলোড অপশন লোড হচ্ছে...",
                 noDownloadOptions: "কোনো ডাউনলোড অপশন নেই",
-                unlockBtn: "এডস দেখে আনলক করুন",
+                unlockBtn: "ডাউনলোড আনলক করুন",
                 downloadBtn: "ডাউনলোড",
                 views: "ভিউ",
                 status: "স্ট্যাটাস",
@@ -1666,12 +1227,21 @@
                 quality: "গুণমান",
                 languageText: "ভাষা",
                 type: "ধরণ",
-                newServer: "নতুন"
+                newServer: "নতুন",
+                // New translations from 
+                unlock_button: "আনলক করুন ({adCount}/{requiredCount})",
+                download_now_button: "এখনই ডাউনলোড করুন",
+                toast_download_starting: "আপনার ডাউনলোড শুরু হচ্ছে...",
+                toast_progress: "অগ্রগতি: {adCount}/{requiredCount}",
+                toast_unlocked: "ডাউনলোড আনলক করা হয়েছে!",
+                toast_ad_error: "বিজ্ঞাপন লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+                loading_ad: "বিজ্ঞাপন লোড হচ্ছে...",
+                verifying_button: "অনুগ্রহ করে অপেক্ষা করুন... {countdown}s"
             }
         };
         
         // App Initialization
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', function() {
             // Set initial language
             setLanguage(currentLanguage);
             
@@ -1679,12 +1249,13 @@
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             
-            // Initialize ads system
-            await initAdsSystem();
+            // Load settings and ads
+            loadGlobalSettings();
+            loadAdsConfig();
+            loadSiteConfig();
             
-            // Load settings
-            await loadGlobalSettings();
-            await loadSiteConfig();
+            // Load timer duration from settings
+            loadTimerSettings();
             
             // Load movies
             loadMovies();
@@ -1730,31 +1301,92 @@
             }
         }
         
+        // Load Timer Settings from Firebase
+        async function loadTimerSettings() {
+            try {
+                const settingsRef = db.collection('settings').doc('general');
+                const docSnap = await settingsRef.get();
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    timerDuration = data.timerDuration || 10;
+                    requiredAds = data.requiredAds || 3;
+                    console.log("Loaded timer settings:", timerDuration, "seconds, required ads:", requiredAds);
+                }
+            } catch (error) {
+                console.error("Could not fetch timer settings, using defaults.", error);
+            }
+        }
+        
         // Check Monetag SDK
         function checkMonetagSDK() {
             setTimeout(() => {
-                if (typeof show_10316324 !== 'undefined') {
+                if (typeof show_31270959 !== 'undefined' && typeof show_10316324 !== 'undefined') {
                     monetagSDKLoaded = true;
-                    console.log("Monetag SDK loaded successfully");
+                    console.log("Monetag SDKs loaded successfully");
                 } else {
-                    console.log("Monetag SDK not loaded");
+                    console.log("Monetag SDK not loaded, retrying...");
+                    checkMonetagSDK();
                 }
             }, 1000);
         }
         
-        // Load Global Settings
+        // Load Global Settings - Download Domains
         async function loadGlobalSettings() {
             try {
                 const settingsDoc = await db.collection('config').doc('settings').get();
                 if (settingsDoc.exists) {
                     const data = settingsDoc.data();
-                    if (data.DOWNLOAD_BASE_DOMAIN) {
-                        DOWNLOAD_BASE_DOMAIN = data.DOWNLOAD_BASE_DOMAIN;
+                    if (data.downloadDomains && Array.isArray(data.downloadDomains)) {
+                        downloadDomains = data.downloadDomains
+                            .sort((a, b) => (a.priority || 1) - (b.priority || 1))
+                            .map(d => d.url);
+                        console.log("Loaded download domains:", downloadDomains);
+                    } else {
+                        // Fallback to single domain
+                        downloadDomains = [data.DOWNLOAD_BASE_DOMAIN || "https://www.example.com"];
                     }
                 }
             } catch (error) {
                 console.error("Error loading settings:", error);
+                downloadDomains = ["https://www.example.com"];
             }
+        }
+        
+        // Get Download URL - Support for multiple domains and full URLs
+        function getDownloadUrl(path) {
+            // If path is already a full URL, return it
+            if (path.startsWith('http://') || path.startsWith('https://')) {
+                return path;
+            }
+            
+            // If no domains configured, return path as is
+            if (downloadDomains.length === 0) {
+                return path;
+            }
+            
+            // Try domains in order of priority
+            for (const domain of downloadDomains) {
+                if (domain && domain.trim()) {
+                    // Remove trailing slash from domain if present
+                    const cleanDomain = domain.replace(/\/$/, '');
+                    // Ensure path starts with slash
+                    const cleanPath = path.startsWith('/') ? path : '/' + path;
+                    const fullUrl = cleanDomain + cleanPath;
+                    
+                    // Test if this domain works by creating a test request
+                    console.log("Trying domain:", fullUrl);
+                    return fullUrl;
+                }
+            }
+            
+            // Fallback to first domain
+            if (downloadDomains.length > 0) {
+                const cleanDomain = downloadDomains[0].replace(/\/$/, '');
+                const cleanPath = path.startsWith('/') ? path : '/' + path;
+                return cleanDomain + cleanPath;
+            }
+            
+            return path;
         }
         
         // Load Site Config
@@ -1771,7 +1403,6 @@
                     siteConfig.blurPercentage = data.blurPercentage || 10;
                     
                     updateSiteLogo();
-                    updateBlurSetting();
                 }
             } catch (error) {
                 console.error("Error loading site config:", error);
@@ -1813,13 +1444,66 @@
             appTitleElement.textContent = siteConfig.siteName;
         }
         
-        // Update Blur Setting
-        function updateBlurSetting() {
-            if (siteConfig.enablePosterBlur) {
-                document.documentElement.style.setProperty('--blur-percent', `${siteConfig.blurPercentage}px`);
-            } else {
-                document.documentElement.style.setProperty('--blur-percent', '0px');
+        // Load Ads Config
+        async function loadAdsConfig() {
+            try {
+                const adsDoc = await db.collection('adsConfig').doc('current').get();
+                if (adsDoc.exists) {
+                    const data = adsDoc.data();
+                    adsConfig = {
+                        ads1: data.ads1 || { enabled: true, code: '' },
+                        ads2: data.ads2 || { enabled: true, code: '' },
+                        ads3: data.ads3 || { enabled: true, code: '' },
+                        ads4: data.ads4 || { enabled: true, code: '' },
+                        ads5: data.ads5 || { enabled: true, code: '' },
+                        ads6: data.ads6 || { enabled: true, code: '' },
+                        adSlot1: data.adSlot1 || { enabled: true, code: '' },
+                        adSlot2: data.adSlot2 || { enabled: true, code: '' },
+                        adSlot3: data.adSlot3 || { enabled: true, code: '' }
+                    };
+                    
+                    // Load ads if enabled
+                    loadAds();
+                }
+            } catch (error) {
+                console.error("Error loading ads config:", error);
             }
+        }
+        
+        // Load Ads
+        function loadAds() {
+            const t = translations[currentLanguage];
+            
+            // Ads 1
+            const ads1Container = document.getElementById('ads1-container');
+            if (adsConfig.adSlot1 && adsConfig.adSlot1.enabled && adsConfig.adSlot1.code) {
+                ads1Container.style.display = 'block';
+                document.getElementById('ads1').innerHTML = adsConfig.adSlot1.code;
+            } else {
+                ads1Container.style.display = 'none';
+            }
+            
+            // Ads 2 is loaded dynamically in modal
+        }
+        
+        // Show Unlock Ad (Using SDK)
+        async function showUnlockAd() {
+            if (!monetagSDKLoaded) {
+                showNotification(translations[currentLanguage].toast_ad_error, true);
+                return Promise.reject("SDK not loaded");
+            }
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    if (typeof show_10316324 === 'function') {
+                        show_10316324().then(resolve).catch(reject);
+                    } else {
+                        reject("Unlock ad SDK not available");
+                    }
+                } catch (error) {
+                    reject(error);
+                }
+            });
         }
         
         // Load Movies
@@ -1881,17 +1565,30 @@
             }
         }
         
-        // Create Movie Card
+        // Create Movie Card with blur functionality
         function createMovieCard(movie, index) {
             const moviesGrid = document.getElementById('moviesGrid');
             const t = translations[currentLanguage];
+            
+            // Add Ads 3 after every 5 movies
+            if (index > 0 && index % 5 === 0 && adsConfig.ads3.enabled && adsConfig.ads3.code) {
+                const adContainer = document.createElement('div');
+                adContainer.className = 'ads-section';
+                adContainer.style.gridColumn = '1 / -1';
+                adContainer.innerHTML = `
+                    <div class="ads-container ads-square" id="ads3-${index/5}">
+                        ${adsConfig.ads3.code}
+                    </div>
+                `;
+                moviesGrid.appendChild(adContainer);
+            }
             
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.dataset.id = movie.id;
             
             const posterUrl = movie.imageUrl || siteConfig.placeholderImage;
-            const viewCount = movieViews[movie.id] || 0;
+            const viewCount = (movie.info5_views || 0) + (movie.localViews || 0);
             
             // Determine custom badge text
             let customBadgeText = '';
@@ -1903,9 +1600,21 @@
                 customBadgeText = 'UPDATED';
             }
             
+            // Check if blur should be applied
+            const shouldApplyBlur = (movie.enablePosterBlur !== undefined ? movie.enablePosterBlur : siteConfig.enablePosterBlur);
+            const blurValue = (movie.enablePosterBlur !== undefined ? movie.blurPercentage : siteConfig.blurPercentage) || 10;
+            
             card.innerHTML = `
                 <div class="movie-poster">
-                    <img src="${posterUrl}" alt="${movie.title || 'Movie'}" loading="lazy">
+                    <img src="${posterUrl}" alt="${movie.title || 'Movie'}" loading="lazy" 
+                         style="${shouldApplyBlur ? `filter: blur(${blurValue}px);` : ''}">
+                    
+                    ${shouldApplyBlur ? `
+                        <div class="blur-overlay">
+                            <div class="blur-text">🔞 18+ Adult</div>
+                        </div>
+                    ` : ''}
+                    
                     <div class="movie-info-overlay">
                         ${customBadgeText ? `
                             <span class="info-badge info-custom">
@@ -1982,8 +1691,8 @@
             return false;
         }
         
-        // Increment View Count (Once per day per movie)
-        function incrementViewCount(movieId) {
+        // Increment View Count (Once per day per movie) and update Firebase
+        async function incrementViewCount(movieId) {
             const today = new Date().toDateString();
             
             // Initialize daily views if not exists
@@ -1993,7 +1702,7 @@
             
             // Check if already viewed today
             if (!dailyViews[today][movieId]) {
-                // Increment total view count
+                // Increment local view count
                 movieViews[movieId] = (movieViews[movieId] || 0) + 1;
                 
                 // Mark as viewed today
@@ -2005,6 +1714,16 @@
                 
                 // Update UI
                 updateViewCountUI(movieId);
+                
+                // Update Firebase
+                try {
+                    const movieRef = db.collection('movies').doc(movieId);
+                    await movieRef.update({
+                        localViews: firebase.firestore.FieldValue.increment(1)
+                    });
+                } catch (error) {
+                    console.error("Error updating view count in Firebase:", error);
+                }
             }
         }
         
@@ -2015,13 +1734,16 @@
                 const viewsCountElement = card.querySelector('.views-count span');
                 if (viewsCountElement) {
                     const t = translations[currentLanguage];
-                    viewsCountElement.textContent = `${movieViews[movieId]} ${t.views}`;
+                    const localViews = movieViews[movieId] || 0;
+                    // Note: We don't have server views here without fetching from Firebase
+                    // So we just show local views + "..." for server views
+                    viewsCountElement.textContent = `${localViews}+ ${t.views}`;
                 }
             }
         }
         
         // Open Movie Modal with New UI
-        function openMovieModal(movie) {
+        async function openMovieModal(movie) {
             currentMovieId = movie.id;
             const t = translations[currentLanguage];
             
@@ -2047,11 +1769,13 @@
             document.getElementById('modalCast').textContent = movie.cast || 'N/A';
             document.getElementById('modalStoryline').textContent = movie.storyline || 'No storyline available.';
             
-            // Load screenshots
+            // Handle Screenshots
+            const screenshotsSection = document.getElementById('screenshotsSection');
             const screenshotsWrapper = document.getElementById('screenshotsWrapper');
             screenshotsWrapper.innerHTML = '';
             
             if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
+                screenshotsSection.style.display = 'block';
                 movie.screenshotLinks.forEach(link => {
                     const slide = document.createElement('div');
                     slide.className = 'swiper-slide';
@@ -2059,11 +1783,16 @@
                     screenshotsWrapper.appendChild(slide);
                 });
             } else {
-                screenshotsWrapper.innerHTML = `
-                    <div class="swiper-slide" style="display: flex; align-items: center; justify-content: center; background: #0f172a;">
-                        <p>${t.noDownloadOptions}</p>
-                    </div>
-                `;
+                screenshotsSection.style.display = 'none';
+            }
+            
+            // Load Ads 2 in modal
+            const ads2Container = document.getElementById('ads2-container');
+            if (adsConfig.ads2.enabled && adsConfig.ads2.code) {
+                ads2Container.style.display = 'block';
+                document.getElementById('ads2').innerHTML = adsConfig.ads2.code;
+            } else {
+                ads2Container.style.display = 'none';
             }
             
             // Load download options
@@ -2072,28 +1801,31 @@
             // Show modal
             document.getElementById('movieModal').style.display = 'flex';
             
-            // Initialize Swiper
-            setTimeout(() => {
-                new Swiper('#screenshotsSwiper', {
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
-                    loop: true,
-                    autoplay: {
-                        delay: 3000,
-                        disableOnInteraction: false,
-                    },
-                });
-            }, 100);
+            // Initialize Swiper if screenshots exist
+            if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
+                setTimeout(() => {
+                    new Swiper('#screenshotsSwiper', {
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                        loop: true,
+                        autoplay: {
+                            delay: 3000,
+                            disableOnInteraction: false,
+                        },
+                    });
+                }, 100);
+            }
         }
         
-        // Load Download Options
+        // Load Download Options - UPDATED with ad unlock system
         function loadDownloadOptions(movie) {
             const downloadOptionsContainer = document.getElementById('downloadOptions');
             const t = translations[currentLanguage];
             
-            const isUnlocked = unlockedMovies[movie.id] || false;
+            const adCount = adCounts[movie.id] || 0;
+            const isUnlocked = adCount >= requiredAds;
             
             if (!movie.downloadOptions || movie.downloadOptions.length === 0) {
                 downloadOptionsContainer.innerHTML = `<p class="loading">${t.noDownloadOptions}</p>`;
@@ -2118,22 +1850,38 @@
                 server.qualities.forEach((quality, qualityIndex) => {
                     const optionId = `option_${movie.id}_${serverIndex}_${qualityIndex}`;
                     
-                    html += `
-                        <div class="quality-option ${isUnlocked ? 'unlocked' : 'locked'}" id="${optionId}">
-                            <div class="quality-text">${quality.quality_text || 'Quality'}</div>
-                            ${isUnlocked ? `
-                                <a href="${DOWNLOAD_BASE_DOMAIN}${quality.path || '#'}" 
+                    if (isUnlocked) {
+                        // Get the download URL using our new function with multiple domain fallback
+                        const downloadUrl = getDownloadUrl(quality.path);
+                        
+                        html += `
+                            <div class="quality-option unlocked" id="${optionId}">
+                                <div class="quality-text">${quality.quality_text || 'Quality'}</div>
+                                <a href="${downloadUrl}" 
                                    class="download-btn" 
-                                   target="_blank">
-                                    <i class="fas fa-download"></i> ${t.downloadBtn}
+                                   target="_blank"
+                                   onclick="showToastMessage('${t.toast_download_starting}')">
+                                    <i class="fas fa-download"></i> ${t.download_now_button}
                                 </a>
-                            ` : `
-                                <button class="unlock-btn" onclick="unlockDownloadOptions('${movie.id}')">
-                                    <i class="fas fa-lock"></i> ${t.unlockBtn}
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="quality-option locked" id="${optionId}">
+                                <div class="quality-text">${quality.quality_text || 'Quality'}</div>
+                                <button class="unlock-btn" 
+                                        onclick="processAdUnlock('${movie.id}', ${requiredAds}, this)"
+                                        data-movie-id="${movie.id}"
+                                        data-required-ads="${requiredAds}">
+                                    <i class="fas fa-lock"></i> 
+                                    <span class="unlock-text">
+                                        ${t.unlock_button.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}
+                                    </span>
                                 </button>
-                            `}
-                        </div>
-                    `;
+                                ${adCount > 0 ? `<div class="timer-progress">${t.toast_progress.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}</div>` : ''}
+                            </div>
+                        `;
+                    }
                 });
                 
                 html += `
@@ -2143,6 +1891,91 @@
             });
             
             downloadOptionsContainer.innerHTML = html;
+        }
+        
+        // Process Ad Unlock - Fixed version
+        async function processAdUnlock(movieId, requiredCount, button) {
+            if (button.disabled) return;
+            
+            const t = translations[currentLanguage];
+            button.disabled = true;
+            
+            // Store original button content
+            const originalHtml = button.innerHTML;
+            button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.loading_ad}`;
+            
+            try {
+                // Show ad using the new SDK  
+                await showUnlockAd();
+                
+                // Increment ad count
+                adCounts[movieId] = (adCounts[movieId] || 0) + 1;
+                localStorage.setItem('adCounts', JSON.stringify(adCounts));
+                
+                const newAdCount = adCounts[movieId];
+                
+                if (newAdCount >= requiredCount) {
+                    // Unlocked successfully
+                    showNotification(t.toast_unlocked);
+                    unlockedMovies[movieId] = true;
+                    sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
+                    
+                    // Reload download options to show download buttons
+                    loadDownloadOptionsForCurrentMovie();
+                } else {
+                    // Still need more ads
+                    showNotification(t.toast_progress.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount));
+                    
+                    // Start timer
+                    let countdown = timerDuration;
+                    button.innerHTML = `<i class="fas fa-clock"></i> ${t.verifying_button.replace('{countdown}', countdown)}`;
+                    
+                    const timerInterval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            button.innerHTML = `<i class="fas fa-clock"></i> ${t.verifying_button.replace('{countdown}', countdown)}`;
+                        } else {
+                            clearInterval(timerInterval);
+                            // Re-enable button with updated count
+                            button.disabled = false;
+                            button.innerHTML = originalHtml;
+                            // Update button text with new count
+                            const unlockText = button.querySelector('.unlock-text');
+                            if (unlockText) {
+                                unlockText.textContent = t.unlock_button.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount);
+                            }
+                            // Update progress indicator
+                            const timerProgress = button.parentElement.querySelector('.timer-progress');
+                            if (timerProgress) {
+                                timerProgress.textContent = t.toast_progress.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount);
+                            }
+                        }
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error("Ad error:", error);
+                showNotification(t.toast_ad_error, true);
+                // Reset button on error
+                button.disabled = false;
+                button.innerHTML = originalHtml;
+            }
+        }
+        
+        // Load download options for current movie
+        async function loadDownloadOptionsForCurrentMovie() {
+            if (!currentMovieId) return;
+            
+            try {
+                const doc = await db.collection('movies').doc(currentMovieId).get();
+                if (doc.exists) {
+                    const movie = doc.data();
+                    movie.id = doc.id;
+                    loadDownloadOptions(movie);
+                }
+            } catch (error) {
+                console.error("Error loading movie:", error);
+            }
         }
         
         // Check if server is new
@@ -2156,75 +1989,9 @@
             }
         }
         
-        // Unlock Download Options (Updated to use new interstitial system)
-        async function unlockDownloadOptions(movieId) {
-            const t = translations[currentLanguage];
-            
-            try {
-                // Show interstitial ad
-                await showInterstitialAd(() => {
-                    // After ad is viewed, unlock the movie
-                    unlockedMovies[movieId] = true;
-                    sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
-                    
-                    // Unlock all options for this movie
-                    document.querySelectorAll('.quality-option.locked').forEach(option => {
-                        option.classList.remove('locked');
-                        option.classList.add('unlocked');
-                        
-                        const qualityText = option.querySelector('.quality-text').textContent;
-                        option.innerHTML = `
-                            <div class="quality-text">${qualityText}</div>
-                            <button class="download-btn" onclick="generateDownloadLink(this, '${movieId}', '${qualityText}')">
-                                <i class="fas fa-download"></i> ${t.downloadBtn}
-                            </button>
-                        `;
-                    });
-                    
-                    showNotification(t.notificationUnlocked);
-                });
-                
-            } catch (error) {
-                console.error("Error showing ad:", error);
-                showNotification(t.notificationAdError, true);
-            }
-        }
-        
-        // Generate Download Link
-        async function generateDownloadLink(button, movieId, qualityText) {
-            try {
-                const movieDoc = await db.collection('movies').doc(movieId).get();
-                if (!movieDoc.exists) {
-                    showNotification("Movie not found", true);
-                    return;
-                }
-                
-                const movie = movieDoc.data();
-                let downloadPath = '';
-                
-                if (movie.downloadOptions) {
-                    for (const server of movie.downloadOptions) {
-                        for (const quality of server.qualities) {
-                            if (quality.quality_text === qualityText) {
-                                downloadPath = quality.path;
-                                break;
-                            }
-                        }
-                        if (downloadPath) break;
-                    }
-                }
-                
-                if (downloadPath) {
-                    const fullUrl = DOWNLOAD_BASE_DOMAIN + downloadPath;
-                    window.open(fullUrl, '_blank');
-                } else {
-                    showNotification("Download link not found", true);
-                }
-                
-            } catch (error) {
-                console.error("Error generating download link:", error);
-                showNotification("Error generating download link", true);
-            }
+        // Show Toast Message
+        function showToastMessage(message) {
+            showNotification(message);
         }
         
         // Search Movies
@@ -2334,10 +2101,9 @@
         }
         
         // Global functions for HTML access
-        window.unlockDownloadOptions = unlockDownloadOptions;
-        window.generateDownloadLink = generateDownloadLink;
-        window.renderAd = renderAd;
-        window.showInterstitialAd = showInterstitialAd;
+        window.processAdUnlock = processAdUnlock;
+        window.showToastMessage = showToastMessage;
+        window.toggleLanguage = toggleLanguage;
     </script>
 </body>
 </html>
