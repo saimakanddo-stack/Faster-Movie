@@ -10,9 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- Monetag SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='10316324' data-sdk='show_10316324'></script>
-    
     <style>
         * {
             margin: 0;
@@ -155,12 +152,17 @@
             margin: 15px auto;
             max-width: 1200px;
             text-align: center;
-            display: none;
         }
         
         .ads-container {
             overflow: hidden;
             margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .ads-banner {
@@ -181,6 +183,137 @@
             width: 300px;
             height: 250px;
             margin: 15px auto;
+        }
+        
+        /* Professional Ad Containers */
+        .ad-top-banner {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            margin: 10px auto;
+        }
+        
+        .ad-middle-banner {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            margin: 20px auto;
+        }
+        
+        .ad-footer-banner {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            margin: 20px auto;
+        }
+        
+        .ad-interstitial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .ad-interstitial-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+        }
+        
+        .ad-interstitial-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--highlight);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ad-interstitial-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--highlight);
+        }
+        
+        .ad-interstitial-container {
+            width: 100%;
+            min-height: 300px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ad-interstitial-action {
+            background: linear-gradient(to right, var(--accent), var(--highlight));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .ad-interstitial-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
+        }
+        
+        /* Ad-block Detection */
+        .ad-block-warning {
+            background: linear-gradient(to right, #f59e0b, #d97706);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 800px;
+            text-align: center;
+            display: none;
+        }
+        
+        .ad-block-warning i {
+            margin-right: 10px;
+        }
+        
+        /* Empty Ad Placeholder */
+        .ad-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+        
+        .ad-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
         }
         
         /* Main Content */
@@ -854,6 +987,13 @@
             .details-list {
                 grid-template-columns: 1fr;
             }
+            
+            /* Professional Ads Responsive */
+            .ad-top-banner,
+            .ad-middle-banner,
+            .ad-footer-banner {
+                height: 70px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -896,6 +1036,13 @@
             .info-value {
                 font-size: 1rem;
             }
+            
+            /* Professional Ads Responsive */
+            .ad-top-banner,
+            .ad-middle-banner,
+            .ad-footer-banner {
+                height: 60px;
+            }
         }
         
         @media (max-width: 360px) {
@@ -918,9 +1065,20 @@
         </button>
     </div>
     
-    <!-- Ads 1: Banner Ads -->
-    <div id="ads1-container" class="ads-section">
-        <div class="ads-container ads-banner" id="ads1"></div>
+    <!-- Ad Block Warning -->
+    <div class="ad-block-warning" id="adBlockWarning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Ad blocker detected. Please disable ad blocker to support our site.</span>
+    </div>
+    
+    <!-- Top Banner Ad (ads1) -->
+    <div class="ads-section" id="ads1TopSection">
+        <div class="ads-container ads-banner" id="ads1Top">
+            <div class="ad-placeholder">
+                <i class="fas fa-ad"></i>
+                <span>Advertisement</span>
+            </div>
+        </div>
     </div>
     
     <!-- Header -->
@@ -940,6 +1098,16 @@
     
     <!-- Main Content -->
     <div class="container">
+        <!-- Middle Banner Ad (ads1) -->
+        <div class="ads-section" id="ads1MiddleSection">
+            <div class="ads-container ads-banner" id="ads1Middle">
+                <div class="ad-placeholder">
+                    <i class="fas fa-ad"></i>
+                    <span>Advertisement</span>
+                </div>
+            </div>
+        </div>
+        
         <h2 class="section-title">
             <i class="fas fa-fire"></i>
             <span id="sectionTitle">Popular Movies</span>
@@ -958,6 +1126,34 @@
             <button class="load-more-btn" id="loadMoreBtn">
                 <i class="fas fa-plus"></i>
                 <span id="loadMoreText">Load More</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Footer Banner Ad (ads1) -->
+    <div class="ads-section" id="ads1FooterSection">
+        <div class="ads-container ads-banner" id="ads1Footer">
+            <div class="ad-placeholder">
+                <i class="fas fa-ad"></i>
+                <span>Advertisement</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Interstitial Ad Overlay -->
+    <div class="ad-interstitial-overlay" id="interstitialOverlay">
+        <div class="ad-interstitial-content">
+            <button class="ad-interstitial-close" id="closeInterstitial">&times;</button>
+            <h3 class="ad-interstitial-title">Watch Ad to Continue</h3>
+            <div class="ad-interstitial-container" id="interstitialContainer">
+                <div class="ad-placeholder">
+                    <i class="fas fa-ad"></i>
+                    <span>Loading Ad...</span>
+                </div>
+            </div>
+            <p>Please watch the ad to unlock the content</p>
+            <button class="ad-interstitial-action" id="continueAfterAd" style="display: none;">
+                Continue
             </button>
         </div>
     </div>
@@ -1052,9 +1248,14 @@
                     </div>
                 </div>
                 
-                <!-- Ads 2: Native Ads -->
-                <div id="ads2-container" class="ads-section" style="margin: 20px 0;">
-                    <div class="ads-container ads-native" id="ads2"></div>
+                <!-- Ads 2: Native Ads (4:1) - Screenshot এর নিচে, Download option এর উপরে -->
+                <div class="ads-section" id="ads2Section" style="margin: 20px 0;">
+                    <div class="ads-container ads-native" id="ads2Container">
+                        <div class="ad-placeholder">
+                            <i class="fas fa-ad"></i>
+                            <span>Advertisement</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Download Section -->
@@ -1079,19 +1280,39 @@
     
     <!-- Firebase Configuration -->
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-  apiKey: "AIzaSyA2z-TDbCBJRsF-68EB53Dxvt5usagUJ3k",
-  authDomain: "movie-sites-d24a9.firebaseapp.com",
-  databaseURL: "https://movie-sites-d24a9-default-rtdb.firebaseio.com",
-  projectId: "movie-sites-d24a9",
-  storageBucket: "movie-sites-d24a9.firebasestorage.app",
-  messagingSenderId: "984858976194",
-  appId: "1:984858976194:web:9301de242575007366005b",
-  measurementId: "G-RF1LJW420T"
-};
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
         
-        // Global Variables
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhbzGAqcgaNaXOSZamSOYwyPbNHZJj4dg",
+            authDomain: "e-m-saim-gang.firebaseapp.com",
+            databaseURL: "https://e-m-saim-gang-default-rtdb.firebaseio.com",
+            projectId: "e-m-saim-gang",
+            storageBucket: "e-m-saim-gang.appspot.com",
+            messagingSenderId: "741683411554",
+            appId: "1:741683411554:web:5af8c6baa90de7d3e6ef3b",
+            measurementId: "G-9GGQCTQDJB"
+        };
+        
+        // ============================================
+        // ADS SYSTEM CONFIGURATION
+        // ============================================
+        
+        // Ads configuration (will be loaded from Firebase)
+        let adsConfig = {
+            ads1: { enabled: true, code: '' }, // 728x90 Banner
+            ads2: { enabled: true, code: '' }, // 4:1 Native
+            ads3: { enabled: true, code: '' }, // 300x250 Square
+            ads4: { enabled: true, code: '' }, // Interstitial 1
+            ads5: { enabled: true, code: '' }, // Interstitial 2
+            ads6: { enabled: true, code: '' }  // Interstitial 3
+        };
+        
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
+        
         let db;
         let lastVisible = null;
         let DOWNLOAD_BASE_DOMAIN = "https://www.example.com";
@@ -1099,15 +1320,6 @@
         let currentMovieId = null;
         let movieViews = JSON.parse(localStorage.getItem('movieViews') || '{}');
         let dailyViews = JSON.parse(localStorage.getItem('dailyViews') || '{}');
-        let adsConfig = {
-            ads1: { enabled: true, code: '' },
-            ads2: { enabled: true, code: '' },
-            ads3: { enabled: true, code: '' },
-            ads4: { enabled: true, code: '' },
-            ads5: { enabled: true, code: '' },
-            ads6: { enabled: true, code: '' }
-        };
-        let monetagSDKLoaded = false;
         let currentLanguage = localStorage.getItem('movieAppLanguage') || 'en';
         let siteConfig = {
             siteName: "Movie Hub",
@@ -1118,7 +1330,244 @@
             blurPercentage: 10
         };
         
-        // Translations
+        // ============================================
+        // ADS SYSTEM FUNCTIONS
+        // ============================================
+        
+        /**
+         * Load ads configuration from Firebase
+         */
+        async function loadAdsConfigFromFirebase() {
+            try {
+                const adsDoc = await db.collection('adsConfig').doc('current').get();
+                
+                if (adsDoc.exists) {
+                    const data = adsDoc.data();
+                    
+                    // Load ads configuration
+                    adsConfig = {
+                        ads1: data.ads1 || { enabled: true, code: '' },
+                        ads2: data.ads2 || { enabled: true, code: '' },
+                        ads3: data.ads3 || { enabled: true, code: '' },
+                        ads4: data.ads4 || { enabled: true, code: '' },
+                        ads5: data.ads5 || { enabled: true, code: '' },
+                        ads6: data.ads6 || { enabled: true, code: '' }
+                    };
+                    
+                    console.log('Ads config loaded from Firebase');
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error loading ads config from Firebase:', error);
+            }
+            
+            return false;
+        }
+        
+        /**
+         * Safely inject ad HTML and execute scripts
+         * @param {string} containerId - ID of the container element
+         * @param {string} adCode - HTML code with scripts for the ad
+         */
+        function renderAd(containerId, adCode) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error(`Container ${containerId} not found`);
+                return false;
+            }
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // If no ad code or empty code, show placeholder
+            if (!adCode || adCode.trim() === '') {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'ad-placeholder';
+                placeholder.innerHTML = '<i class="fas fa-ad"></i><span>Advertisement</span>';
+                container.appendChild(placeholder);
+                return false;
+            }
+            
+            try {
+                // Create a temporary div to parse the HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = adCode;
+                
+                // Extract scripts
+                const scripts = tempDiv.querySelectorAll('script');
+                
+                // Add non-script content first
+                const fragment = document.createDocumentFragment();
+                tempDiv.childNodes.forEach(node => {
+                    if (node.nodeName !== 'SCRIPT') {
+                        fragment.appendChild(node.cloneNode(true));
+                    }
+                });
+                container.appendChild(fragment);
+                
+                // Execute scripts safely
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    
+                    // Copy all attributes
+                    Array.from(script.attributes).forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+                    
+                    // Handle inline scripts
+                    if (!script.src && script.textContent) {
+                        newScript.textContent = script.textContent;
+                    }
+                    
+                    // Add to head for execution
+                    document.head.appendChild(newScript);
+                    
+                    // Remove after execution (for inline scripts)
+                    if (!script.src) {
+                        setTimeout(() => {
+                            if (newScript.parentNode) {
+                                newScript.parentNode.removeChild(newScript);
+                            }
+                        }, 1000);
+                    }
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Error rendering ad:', error);
+                // Show placeholder on error
+                const placeholder = document.createElement('div');
+                placeholder.className = 'ad-placeholder';
+                placeholder.innerHTML = '<i class="fas fa-ad"></i><span>Advertisement</span>';
+                container.innerHTML = '';
+                container.appendChild(placeholder);
+                return false;
+            }
+        }
+        
+        /**
+         * Load all ads based on configuration
+         */
+        async function loadAds() {
+            // Load ads1 (728x90 Banner) - Top, Middle, Footer
+            if (adsConfig.ads1.enabled && adsConfig.ads1.code) {
+                renderAd('ads1Top', adsConfig.ads1.code);
+                renderAd('ads1Middle', adsConfig.ads1.code);
+                renderAd('ads1Footer', adsConfig.ads1.code);
+            } else {
+                // Hide ads1 sections if disabled
+                document.getElementById('ads1TopSection').style.display = 'none';
+                document.getElementById('ads1MiddleSection').style.display = 'none';
+                document.getElementById('ads1FooterSection').style.display = 'none';
+            }
+            
+            // ads2 will be loaded in modal when opened
+            // ads3 will be loaded dynamically in createMovieCard function
+            
+            console.log('Ads loaded successfully');
+        }
+        
+        /**
+         * Show interstitial ad with callback
+         * @param {Function} onComplete - Callback function after ad is viewed
+         */
+        async function showInterstitialAd(onComplete) {
+            const overlay = document.getElementById('interstitialOverlay');
+            const container = document.getElementById('interstitialContainer');
+            const continueBtn = document.getElementById('continueAfterAd');
+            
+            // Reset state
+            continueBtn.style.display = 'none';
+            container.innerHTML = '<div class="ad-placeholder"><i class="fas fa-ad"></i><span>Loading Ad...</span></div>';
+            
+            // Get random interstitial ad (ads4, ads5, ads6)
+            const interstitialAds = ['ads4', 'ads5', 'ads6'];
+            const enabledInterstitialAds = interstitialAds.filter(ad => 
+                adsConfig[ad]?.enabled && adsConfig[ad]?.code
+            );
+            
+            if (enabledInterstitialAds.length === 0) {
+                showNotification('No ads available. Please try again later.', true);
+                return;
+            }
+            
+            // Select random interstitial ad
+            const randomAd = enabledInterstitialAds[Math.floor(Math.random() * enabledInterstitialAds.length)];
+            const adCode = adsConfig[randomAd].code;
+            
+            // Load interstitial ad
+            const success = renderAd('interstitialContainer', adCode);
+            
+            if (!success) {
+                showNotification('Failed to load ad. Please try again.', true);
+                return;
+            }
+            
+            // Show overlay
+            overlay.style.display = 'flex';
+            
+            // Handle continue button
+            continueBtn.onclick = function() {
+                overlay.style.display = 'none';
+                if (typeof onComplete === 'function') {
+                    onComplete();
+                }
+            };
+            
+            // Automatically show continue button after 5 seconds
+            setTimeout(() => {
+                continueBtn.style.display = 'block';
+            }, 5000);
+        }
+        
+        /**
+         * Check if ad blocker is active
+         */
+        function detectAdBlock() {
+            const testAd = document.createElement('div');
+            testAd.innerHTML = '&nbsp;';
+            testAd.className = 'adsbygoogle';
+            testAd.style.cssText = 'position:absolute;top:-100px;left:-100px;width:1px;height:1px;overflow:hidden;opacity:0;';
+            document.body.appendChild(testAd);
+            
+            setTimeout(() => {
+                const isBlocked = testAd.offsetHeight === 0 || 
+                                 testAd.offsetWidth === 0 ||
+                                 window.getComputedStyle(testAd).display === 'none';
+                
+                if (isBlocked) {
+                    document.getElementById('adBlockWarning').style.display = 'block';
+                }
+                
+                document.body.removeChild(testAd);
+            }, 100);
+        }
+        
+        /**
+         * Initialize ads system
+         */
+        async function initAdsSystem() {
+            // Detect ad blocker
+            detectAdBlock();
+            
+            // Load ads config from Firebase
+            await loadAdsConfigFromFirebase();
+            
+            // Load ads
+            await loadAds();
+            
+            // Setup interstitial close button
+            document.getElementById('closeInterstitial').onclick = function() {
+                document.getElementById('interstitialOverlay').style.display = 'none';
+            };
+            
+            console.log('Ads system initialized');
+        }
+        
+        // ============================================
+        // TRANSLATIONS
+        // ============================================
+        
         const translations = {
             en: {
                 appTitle: "Movie Hub",
@@ -1131,7 +1580,7 @@
                 downloadOptions: "Download Options",
                 loadingOptions: "Loading download options...",
                 noDownloadOptions: "No download options available",
-                unlockBtn: "Unlock to Download",
+                unlockBtn: "Watch Ad to Unlock",
                 downloadBtn: "Download",
                 views: "views",
                 status: "status",
@@ -1157,7 +1606,7 @@
                 downloadOptions: "ডাউনলোড অপশন",
                 loadingOptions: "ডাউনলোড অপশন লোড হচ্ছে...",
                 noDownloadOptions: "কোনো ডাউনলোড অপশন নেই",
-                unlockBtn: "ডাউনলোড আনলক করুন",
+                unlockBtn: "এডস দেখে আনলক করুন",
                 downloadBtn: "ডাউনলোড",
                 views: "ভিউ",
                 status: "স্ট্যাটাস",
@@ -1174,8 +1623,11 @@
             }
         };
         
-        // App Initialization
-        document.addEventListener('DOMContentLoaded', function() {
+        // ============================================
+        // APP INITIALIZATION
+        // ============================================
+        
+        document.addEventListener('DOMContentLoaded', async function() {
             // Set initial language
             setLanguage(currentLanguage);
             
@@ -1183,22 +1635,24 @@
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             
-            // Load settings and ads
-            loadGlobalSettings();
-            loadAdsConfig();
-            loadSiteConfig();
+            // Initialize ads system
+            await initAdsSystem();
+            
+            // Load settings
+            await loadGlobalSettings();
+            await loadSiteConfig();
             
             // Load movies
             loadMovies();
             
             // Setup event listeners
             setupEventListeners();
-            
-            // Check Monetag SDK
-            checkMonetagSDK();
         });
         
-        // Language Functions
+        // ============================================
+        // LANGUAGE FUNCTIONS
+        // ============================================
+        
         function setLanguage(lang) {
             currentLanguage = lang;
             localStorage.setItem('movieAppLanguage', lang);
@@ -1232,20 +1686,10 @@
             }
         }
         
-        // Check Monetag SDK
-        function checkMonetagSDK() {
-            setTimeout(() => {
-                if (typeof show_31270959 !== 'undefined') {
-                    monetagSDKLoaded = true;
-                    console.log("Monetag SDK loaded successfully");
-                } else {
-                    console.log("Monetag SDK not loaded, retrying...");
-                    checkMonetagSDK();
-                }
-            }, 1000);
-        }
+        // ============================================
+        // SETTINGS FUNCTIONS
+        // ============================================
         
-        // Load Global Settings
         async function loadGlobalSettings() {
             try {
                 const settingsDoc = await db.collection('config').doc('settings').get();
@@ -1260,7 +1704,6 @@
             }
         }
         
-        // Load Site Config
         async function loadSiteConfig() {
             try {
                 const siteConfigDoc = await db.collection('config').doc('siteConfig').get();
@@ -1281,7 +1724,6 @@
             }
         }
         
-        // Update Site Logo
         function updateSiteLogo() {
             const logoElement = document.getElementById('siteLogo');
             const appTitleElement = document.getElementById('appTitle');
@@ -1316,7 +1758,6 @@
             appTitleElement.textContent = siteConfig.siteName;
         }
         
-        // Update Blur Setting
         function updateBlurSetting() {
             if (siteConfig.enablePosterBlur) {
                 document.documentElement.style.setProperty('--blur-percent', `${siteConfig.blurPercentage}px`);
@@ -1325,105 +1766,10 @@
             }
         }
         
-        // Load Ads Config
-        async function loadAdsConfig() {
-            try {
-                const adsDoc = await db.collection('adsConfig').doc('current').get();
-                if (adsDoc.exists) {
-                    const data = adsDoc.data();
-                    adsConfig = {
-                        ads1: data.ads1 || { enabled: true, code: '' },
-                        ads2: data.ads2 || { enabled: true, code: '' },
-                        ads3: data.ads3 || { enabled: true, code: '' },
-                        ads4: data.ads4 || { enabled: true, code: '' },
-                        ads5: data.ads5 || { enabled: true, code: '' },
-                        ads6: data.ads6 || { enabled: true, code: '' }
-                    };
-                    
-                    // Load ads if enabled
-                    loadAds();
-                }
-            } catch (error) {
-                console.error("Error loading ads config:", error);
-            }
-        }
+        // ============================================
+        // MOVIE FUNCTIONS
+        // ============================================
         
-        // Load Ads
-        function loadAds() {
-            const t = translations[currentLanguage];
-            
-            // Ads 1
-            const ads1Container = document.getElementById('ads1-container');
-            if (adsConfig.ads1.enabled && adsConfig.ads1.code) {
-                ads1Container.style.display = 'block';
-                document.getElementById('ads1').innerHTML = adsConfig.ads1.code;
-            } else {
-                ads1Container.style.display = 'none';
-            }
-            
-            // Ads 2 is loaded dynamically in modal
-        }
-        
-        // Show Random Unlock Ad
-        async function showRandomUnlockAd() {
-            if (!monetagSDKLoaded) {
-                showNotification(translations[currentLanguage].notificationAdError, true);
-                return Promise.reject("SDK not loaded");
-            }
-            
-            const adTypes = ['ads4', 'ads5', 'ads6'];
-            const enabledAds = adTypes.filter(type => adsConfig[type]?.enabled && adsConfig[type]?.code);
-            
-            if (enabledAds.length === 0) {
-                return Promise.resolve();
-            }
-            
-            const randomAd = enabledAds[Math.floor(Math.random() * enabledAds.length)];
-            
-            return new Promise((resolve, reject) => {
-                try {
-                    // Execute the ad code
-                    const adCode = adsConfig[randomAd].code;
-                    
-                    // For Monetag ads, we need to execute the function
-                    if (adCode.includes('show_31270959')) {
-                        if (typeof show_31270959 === 'function') {
-                            // Extract the function call from the code
-                            if (adCode.includes("show_31270959('pop')")) {
-                                show_31270959('pop').then(resolve).catch(reject);
-                            } else if (adCode.includes("show_31270959({")) {
-                                // Extract JSON from the code
-                                const jsonMatch = adCode.match(/show_31270959\(\s*(\{[\s\S]*?\})\s*\)/);
-                                if (jsonMatch) {
-                                    try {
-                                        const settings = eval('(' + jsonMatch[1] + ')');
-                                        show_31270959(settings).then(resolve).catch(reject);
-                                    } catch (e) {
-                                        show_31270959().then(resolve).catch(reject);
-                                    }
-                                } else {
-                                    show_31270959().then(resolve).catch(reject);
-                                }
-                            } else {
-                                show_31270959().then(resolve).catch(reject);
-                            }
-                        } else {
-                            reject("SDK function not available");
-                        }
-                    } else {
-                        // For other ad networks, just execute the code
-                        const script = document.createElement('script');
-                        script.innerHTML = adCode;
-                        document.head.appendChild(script);
-                        setTimeout(resolve, 1000);
-                    }
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        }
-        
-        // Load Movies
         async function loadMovies(loadMore = false) {
             const moviesGrid = document.getElementById('moviesGrid');
             const t = translations[currentLanguage];
@@ -1482,22 +1828,29 @@
             }
         }
         
-        // Create Movie Card
         function createMovieCard(movie, index) {
             const moviesGrid = document.getElementById('moviesGrid');
             const t = translations[currentLanguage];
             
-            // Add Ads 3 after every 5 movies
+            // Add ads3 (300x250) after every 5 movies
             if (index > 0 && index % 5 === 0 && adsConfig.ads3.enabled && adsConfig.ads3.code) {
                 const adContainer = document.createElement('div');
                 adContainer.className = 'ads-section';
                 adContainer.style.gridColumn = '1 / -1';
                 adContainer.innerHTML = `
                     <div class="ads-container ads-square" id="ads3-${index/5}">
-                        ${adsConfig.ads3.code}
+                        <div class="ad-placeholder">
+                            <i class="fas fa-ad"></i>
+                            <span>Advertisement</span>
+                        </div>
                     </div>
                 `;
                 moviesGrid.appendChild(adContainer);
+                
+                // Render actual ad
+                setTimeout(() => {
+                    renderAd(`ads3-${index/5}`, adsConfig.ads3.code);
+                }, 100);
             }
             
             const card = document.createElement('div');
@@ -1680,13 +2033,13 @@
                 `;
             }
             
-            // Load Ads 2 in modal
-            const ads2Container = document.getElementById('ads2-container');
+            // Load ads2 (4:1 Native) in modal
+            const ads2Container = document.getElementById('ads2Container');
             if (adsConfig.ads2.enabled && adsConfig.ads2.code) {
-                ads2Container.style.display = 'block';
-                document.getElementById('ads2').innerHTML = adsConfig.ads2.code;
+                renderAd('ads2Container', adsConfig.ads2.code);
+                document.getElementById('ads2Section').style.display = 'block';
             } else {
-                ads2Container.style.display = 'none';
+                document.getElementById('ads2Section').style.display = 'none';
             }
             
             // Load download options
@@ -1784,26 +2137,28 @@
             const t = translations[currentLanguage];
             
             try {
-                await showRandomUnlockAd();
-                
-                unlockedMovies[movieId] = true;
-                sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
-                
-                // Unlock all options for this movie
-                document.querySelectorAll('.quality-option.locked').forEach(option => {
-                    option.classList.remove('locked');
-                    option.classList.add('unlocked');
+                // Show interstitial ad
+                await showInterstitialAd(() => {
+                    // After ad is viewed, unlock the movie
+                    unlockedMovies[movieId] = true;
+                    sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
                     
-                    const qualityText = option.querySelector('.quality-text').textContent;
-                    option.innerHTML = `
-                        <div class="quality-text">${qualityText}</div>
-                        <button class="download-btn" onclick="generateDownloadLink(this, '${movieId}', '${qualityText}')">
-                            <i class="fas fa-download"></i> ${t.downloadBtn}
-                        </button>
-                    `;
+                    // Unlock all options for this movie
+                    document.querySelectorAll('.quality-option.locked').forEach(option => {
+                        option.classList.remove('locked');
+                        option.classList.add('unlocked');
+                        
+                        const qualityText = option.querySelector('.quality-text').textContent;
+                        option.innerHTML = `
+                            <div class="quality-text">${qualityText}</div>
+                            <button class="download-btn" onclick="generateDownloadLink(this, '${movieId}', '${qualityText}')">
+                                <i class="fas fa-download"></i> ${t.downloadBtn}
+                            </button>
+                        `;
+                    });
+                    
+                    showNotification(t.notificationUnlocked);
                 });
-                
-                showNotification(t.notificationUnlocked);
                 
             } catch (error) {
                 console.error("Error showing ad:", error);
@@ -1957,7 +2312,8 @@
         // Global functions for HTML access
         window.unlockDownloadOptions = unlockDownloadOptions;
         window.generateDownloadLink = generateDownloadLink;
+        window.renderAd = renderAd;
+        window.showInterstitialAd = showInterstitialAd;
     </script>
 </body>
-
 </html>
