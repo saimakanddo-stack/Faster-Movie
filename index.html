@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
     <!-- Monetag SDK -->
     <script src='//libtl.com/sdk.js' data-zone='10316324' data-sdk='show_10316324'></script>
@@ -63,6 +64,43 @@
             align-items: center;
             gap: 8px;
             font-size: 0.9rem;
+        }
+        
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        
+        .connection-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .connection-status.online {
+            background: rgba(16, 185, 129, 0.8);
+        }
+        
+        .connection-status.offline {
+            background: rgba(239, 68, 68, 0.8);
+        }
+        
+        .connection-status.syncing {
+            background: rgba(245, 158, 11, 0.8);
         }
         
         /* Header */
@@ -180,6 +218,134 @@
             width: 300px;
             height: 250px;
             margin: 15px auto;
+        }
+        
+        /* Image Slider Styles */
+        .slider-section {
+            margin: 20px auto;
+            max-width: 1200px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .slider-container {
+                height: 300px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .slider-container {
+                height: 350px;
+            }
+        }
+        
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        
+        .slider-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .slider-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .slider-item a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-dot.active {
+            background-color: var(--highlight);
+            transform: scale(1.2);
+        }
+        
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.3s ease;
+        }
+        
+        .slider-nav:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .slider-nav.prev {
+            left: 15px;
+        }
+        
+        .slider-nav.next {
+            right: 15px;
+        }
+        
+        .slider-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .slider-error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--highlight);
+            padding: 20px;
+            text-align: center;
         }
         
         /* Main Content */
@@ -404,7 +570,7 @@
             transform: none;
         }
         
-        /* Movie Detail Modal - New UI */
+        /* Movie Detail Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -577,7 +743,7 @@
             font-size: 20px;
         }
         
-        /* Details Card (Now below screenshots) */
+        /* Details Card */
         .details-card {
             background-color: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
@@ -743,7 +909,7 @@
             box-shadow: 0 5px 10px rgba(16, 185, 129, 0.3);
         }
         
-        /* Unlock Button - New Style */
+        /* Unlock Button */
         .unlock-btn {
             display: inline-block;
             background: linear-gradient(to right, #f59e0b, #ef4444);
@@ -783,6 +949,47 @@
             margin-top: 5px;
             color: var(--text-secondary);
             text-align: center;
+        }
+        
+        /* Download Link Details */
+        .download-link-details {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-size {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .download-type {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        
+        /* Download Progress Bar */
+        .download-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .download-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #10b981, #3b82f6);
+            width: 0%;
+            transition: width 0.3s ease;
         }
         
         /* Loading State */
@@ -849,6 +1056,73 @@
             background-color: var(--highlight);
         }
         
+        /* Copy Link Button 
+        .copy-link-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: background 0.2s;
+        }
+            
+        .copy-link-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        */
+
+
+        /* Link Generated Status */
+        .link-generated {
+            color: #10b981;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* File Size Loading */
+        .file-size-loading {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+/* ====== Download Button Protection ====== */
+/* Disable right-click/long press context menu for download buttons */
+.download-btn {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Prevent context menu on download buttons */
+.download-btn,
+.quality-option {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Also disable context menu on the download links container */
+.download-options,
+.quality-options {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+/* ====== End Download Button Protection ====== */
+
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .lang-switcher {
@@ -877,7 +1151,6 @@
                 height: 80px;
             }
             
-            /* New UI Responsive */
             .modal-title {
                 font-size: 1.8rem;
             }
@@ -893,6 +1166,33 @@
             
             .details-list {
                 grid-template-columns: 1fr;
+            }
+            
+            .slider-container {
+                height: 200px;
+            }
+            
+            .slider-nav {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .slider-nav.prev {
+                left: 10px;
+            }
+            
+            .slider-nav.next {
+                right: 10px;
+            }
+            
+            .connection-status {
+                top: 60px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            
+            .connection-status.show {
+                transform: translateX(-50%) translateY(0);
             }
         }
         
@@ -924,7 +1224,6 @@
                 height: 200px;
             }
             
-            /* New UI Responsive */
             .modal-title {
                 font-size: 1.5rem;
             }
@@ -936,6 +1235,15 @@
             .info-value {
                 font-size: 1rem;
             }
+            
+            .slider-container {
+                height: 180px;
+            }
+            
+            .connection-status {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
         }
         
         @media (max-width: 360px) {
@@ -946,10 +1254,25 @@
             .movie-title {
                 font-size: 0.85rem;
             }
+            
+            .slider-container {
+                height: 160px;
+            }
         }
+
+
+
+
+        
     </style>
 </head>
 <body>
+    <!-- Connection Status Indicator -->
+    <div class="connection-status" id="connectionStatus">
+        <i class="fas fa-wifi"></i>
+        <span id="connectionText">Connected</span>
+    </div>
+    
     <!-- Language Switcher -->
     <div class="lang-switcher">
         <button class="lang-btn" id="langToggle">
@@ -958,7 +1281,7 @@
         </button>
     </div>
     
-    <!-- Ads 1: Banner Ads -->
+    <!-- Ads 1: Header Banner Ads -->
     <div id="ads1-container" class="ads-section">
         <div class="ads-container ads-banner" id="ads1"></div>
     </div>
@@ -968,7 +1291,7 @@
         <div class="header-content">
             <a href="#" class="logo" id="siteLogo">
                 <i class="fas fa-film"></i>
-                <span id="appTitle">Movie Hub</span>
+                <span id="appTitle">Dub Fusion Hub</span>
             </a>
             
             <div class="search-container">
@@ -978,8 +1301,29 @@
         </div>
     </header>
     
+    <!-- Ads 3: Square Ads (after every 5 movies) -->
+    <div id="ads3-container" class="ads-section">
+        <div class="ads-container ads-square" id="ads3"></div>
+    </div>
+    
     <!-- Main Content -->
     <div class="container">
+        <!-- Image Slider Section -->
+        <div class="slider-section" id="sliderSection">
+            <div class="slider-container" id="sliderContainer">
+                <div class="slider-wrapper" id="sliderWrapper">
+                    <!-- Slider items will be loaded here -->
+                </div>
+                <button class="slider-nav prev" id="sliderPrev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="slider-nav next" id="sliderNext">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="slider-dots" id="sliderDots"></div>
+            </div>
+        </div>
+        
         <h2 class="section-title">
             <i class="fas fa-fire"></i>
             <span id="sectionTitle">Popular Movies</span>
@@ -993,6 +1337,11 @@
             </div>
         </div>
         
+        <!-- Ads 5: Native Ads (above load more) -->
+        <div id="ads5-container" class="ads-section">
+            <div class="ads-container ads-native" id="ads5"></div>
+        </div>
+        
         <!-- Load More Button -->
         <div class="load-more-container" id="loadMoreContainer">
             <button class="load-more-btn" id="loadMoreBtn">
@@ -1000,9 +1349,23 @@
                 <span id="loadMoreText">Load More</span>
             </button>
         </div>
+        
+        <!-- Ads 6: Banner Ads (footer এর উপরে) -->
+        <div id="ads6-container" class="ads-section">
+            <div class="ads-container ads-banner" id="ads6"></div>
+        </div>
     </div>
     
-    <!-- Movie Detail Modal - New UI -->
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            &copy; 2025 <span id="footerSiteName">Dub Fusion Hub</span>. All rights reserved.
+            <br>
+            <small>Disclaimer: This site does not host any files.</small>
+        </p>
+    </footer>
+    
+    <!-- Movie Detail Modal -->
     <div class="modal-overlay" id="movieModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1013,7 +1376,7 @@
                 <!-- Movie Header -->
                 <div class="movie-header">
                     <h1 class="modal-title" id="modalMovieTitle">Movie Title</h1>
-                    <p class="modal-subtitle" id="modalMovieSubtitle">WEB-DL | Dual Audio</p>
+                    <p class="modal-subtitle" id="modalMovieSubtitle">WEB-DL | Movie</p>
                     
                     <div class="info-row">
                         <div class="info-col">
@@ -1031,7 +1394,7 @@
                     </div>
                 </div>
                 
-                <!-- Screenshots Section (Will be hidden if no screenshots) -->
+                <!-- Screenshots Section -->
                 <div class="screenshots-section" id="screenshotsSection" style="display: none;">
                     <h4 class="section-subtitle">
                         <i class="fas fa-images"></i>
@@ -1046,7 +1409,7 @@
                     </div>
                 </div>
                 
-                <!-- Details Card (Now below screenshots) -->
+                <!-- Details Card -->
                 <div class="details-card">
                     <div class="details-list">
                         <div class="detail-item">
@@ -1133,8 +1496,10 @@
         
         // Global Variables
         let db;
+        let realtimeDb;
         let lastVisible = null;
-        let downloadDomains = [];
+        let downloadServers = [];
+        let globalDomains = [];
         let unlockedMovies = JSON.parse(sessionStorage.getItem('unlockedMovies') || '{}');
         let currentMovieId = null;
         let movieViews = JSON.parse(localStorage.getItem('movieViews') || '{}');
@@ -1150,23 +1515,62 @@
         let monetagSDKLoaded = false;
         let currentLanguage = localStorage.getItem('movieAppLanguage') || 'en';
         let siteConfig = {
-            siteName: "Movie Hub",
+            siteName: "Dub Fusion Hub",
             siteLogoUrl: "",
             showLogo: false,
             placeholderImage: "https://via.placeholder.com/300x450/1a1a2e/ffffff?text=No+Image",
             enablePosterBlur: false,
-            blurPercentage: 10
+            blurPercentage: 10,
+            showInfo5Views: true
         };
         
-        // New variables for ad unlock system 
-        let timerDuration = 10; // Default wait time in seconds
-        let requiredAds = 3; // Default required ads count
+        // Connection Management Variables
+        let isOnline = navigator.onLine;
+        let connectionCheckInterval;
+        let lastUpdateCheck = 0;
+        let autoUpdateEnabled = true;
+        
+        // Download System Variables
+        let downloadQueue = [];
+        let activeDownloads = 0;
+        let maxParallelDownloads = 2;
+        
+        // Slider variables
+        let sliderInterval;
+        let currentSlide = 0;
+        let sliderItems = [];
+        
+        // Ad unlock system variables
+        let timerDuration = 10;
+        let requiredAds = 3;
         let adCounts = JSON.parse(localStorage.getItem('adCounts') || '{}');
+        
+        // Download link generation variables
+        let linkGenerators = [];
+        let linkPatterns = [];
+        let fileExtensions = ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.m4v'];
+        
+        // File Size Database Variables
+        let fileSizesCache = JSON.parse(localStorage.getItem('fileSizesCache') || '{}');
+        let fileSizeConfig = {
+            defaultSizes: {
+                '480p': '700MB',
+                '720p': '1.5GB',
+                '1080p': '3GB',
+                '4K': '10GB',
+                'WEB-DL': '2GB',
+                'BluRay': '4GB',
+                'HDTV': '1.2GB',
+                'HD': '1GB',
+                'SD': '500MB'
+            },
+            sizeMapping: {}
+        };
         
         // Translations
         const translations = {
             en: {
-                appTitle: "Movie Hub",
+                appTitle: "Dub Fusion Hub",
                 searchPlaceholder: "Search movies...",
                 sectionTitle: "Popular Movies",
                 loadingMovies: "Loading movies...",
@@ -1190,7 +1594,6 @@
                 languageText: "Language",
                 type: "Type",
                 newServer: "New",
-                // New translations from filedownloader.html
                 unlock_button: "Unlock ({adCount}/{requiredCount})",
                 download_now_button: "Download Now",
                 toast_download_starting: "Your download is starting...",
@@ -1198,10 +1601,31 @@
                 toast_unlocked: "Download unlocked!",
                 toast_ad_error: "Could not load ad. Please try again.",
                 loading_ad: "Loading ad...",
-                verifying_button: "Please wait {countdown}s"
+                verifying_button: "Please wait {countdown}s",
+                // Connection status translations
+                connectionOnline: "Online",
+                connectionOffline: "Offline",
+                connectionSyncing: "Syncing...",
+                connectionReconnecting: "Reconnecting...",
+                // Download translations
+                generating_link: "Generating download link...",
+                link_generated: "Link generated successfully",
+                // copy_link: "Copy Link",
+                // link_copied: "Link copied to clipboard",
+                file_size: "Size",
+                download_type: "Type",
+                direct_download: "Direct",
+                streaming: "Streaming",
+                loading_file_size: "Loading size...",
+                // Slider translations
+                noSlides: "No promotional slides available",
+                slidesError: "Could not load slides",
+                // Footer translations
+                footerText: "&copy; 2024 {siteName}. All rights reserved.",
+                disclaimer: "Disclaimer: This site does not host any files."
             },
             bn: {
-                appTitle: "মুভি হাব",
+                appTitle: "ডাব ফিউশন হাব",
                 searchPlaceholder: "মুভি খুঁজুন...",
                 sectionTitle: "জনপ্রিয় মুভি",
                 loadingMovies: "মুভি লোড হচ্ছে...",
@@ -1225,7 +1649,6 @@
                 languageText: "ভাষা",
                 type: "ধরণ",
                 newServer: "নতুন",
-                // New translations from filedownloader.html
                 unlock_button: "আনলক করুন ({adCount}/{requiredCount})",
                 download_now_button: "এখনই ডাউনলোড করুন",
                 toast_download_starting: "আপনার ডাউনলোড শুরু হচ্ছে...",
@@ -1233,7 +1656,28 @@
                 toast_unlocked: "ডাউনলোড আনলক করা হয়েছে!",
                 toast_ad_error: "বিজ্ঞাপন লোড করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
                 loading_ad: "বিজ্ঞাপন লোড হচ্ছে...",
-                verifying_button: "অনুগ্রহ করে অপেক্ষা করুন... {countdown}s"
+                verifying_button: "অনুগ্রহ করে অপেক্ষা করুন... {countdown}s",
+                // Connection status translations
+                connectionOnline: "অনলাইন",
+                connectionOffline: "অফলাইন",
+                connectionSyncing: "সিঙ্ক করছি...",
+                connectionReconnecting: "পুনঃসংযোগ করা হচ্ছে...",
+                // Download translations
+                generating_link: "ডাউনলোড লিঙ্ক তৈরি হচ্ছে...",
+                link_generated: "লিঙ্ক সফলভাবে তৈরি হয়েছে",
+                // copy_link: "লিঙ্ক কপি করুন",
+                // link_copied: "লিঙ্ক ক্লিপবোর্ডে কপি করা হয়েছে",
+                file_size: "সাইজ",
+                download_type: "ধরণ",
+                direct_download: "ডাইরেক্ট",
+                streaming: "স্ট্রিমিং",
+                loading_file_size: "সাইজ লোড হচ্ছে...",
+                // Slider translations
+                noSlides: "কোন প্রচারমূলক স্লাইড উপলব্ধ নেই",
+                slidesError: "স্লাইড লোড করা যায়নি",
+                // Footer translations
+                footerText: "&copy; ২০২৫ {siteName}. সর্বস্বত্ব সংরক্ষিত।",
+                disclaimer: "দাবিত্যাগ: এই সাইটটি কোনো ফাইল হোস্ট করে না।"
             }
         };
         
@@ -1242,60 +1686,1030 @@
             // Set initial language
             setLanguage(currentLanguage);
             
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-            
-            // Load settings and ads
-            loadGlobalSettings();
-            loadAdsConfig();
-            loadSiteConfig();
-            
-            // Load timer duration from settings
-            loadTimerSettings();
-            
-            // Load movies
-            loadMovies();
+            try {
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                realtimeDb = firebase.database();
+                
+                // Initialize connection management
+                initConnectionManagement();
+                
+                // Initialize download system
+                initDownloadSystem();
+                
+                // Load all settings with proper error handling
+                initializeApp();
+            } catch (error) {
+                console.error("Firebase initialization error:", error);
+                showNotification("Failed to initialize app. Please refresh.", true);
+            }
             
             // Setup event listeners
             setupEventListeners();
-            
-            // Check Monetag SDK
-            checkMonetagSDK();
         });
+        
+        // Initialize Connection Management System
+        function initConnectionManagement() {
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionText = document.getElementById('connectionText');
+            
+            // Set initial connection status
+            updateConnectionStatus(isOnline);
+            
+            // Listen for online/offline events
+            window.addEventListener('online', () => {
+                isOnline = true;
+                updateConnectionStatus(true);
+                
+                // Auto-sync when connection is restored
+                setTimeout(() => {
+                    autoSyncData();
+                    processPendingDownloads();
+                }, 1000);
+            });
+            
+            window.addEventListener('offline', () => {
+                isOnline = false;
+                updateConnectionStatus(false);
+            });
+            
+            // Check connection every 30 seconds
+            connectionCheckInterval = setInterval(() => {
+                checkServerConnection();
+            }, 30000);
+        }
+        
+        // Initialize Download System
+        function initDownloadSystem() {
+            // Load link generators and patterns
+            loadLinkGenerators();
+            loadLinkPatterns();
+            loadFileSizeConfig();
+            
+            // Process download queue every 5 seconds
+            setInterval(() => {
+                processDownloadQueue();
+            }, 5000);
+        }
+        
+        // Load File Size Configuration from Firebase
+        async function loadFileSizeConfig() {
+            try {
+                const sizeConfigDoc = await db.collection('config').doc('fileSizeConfig').get();
+                if (sizeConfigDoc.exists) {
+                    const data = sizeConfigDoc.data();
+                    fileSizeConfig = {
+                        defaultSizes: data.defaultSizes || fileSizeConfig.defaultSizes,
+                        sizeMapping: data.sizeMapping || {}
+                    };
+                    
+                    // Cache the configuration
+                    localStorage.setItem('fileSizeConfig', JSON.stringify(fileSizeConfig));
+                }
+            } catch (error) {
+                console.error("Error loading file size config:", error);
+                // Try to load from cache
+                const cachedConfig = localStorage.getItem('fileSizeConfig');
+                if (cachedConfig) {
+                    try {
+                        fileSizeConfig = JSON.parse(cachedConfig);
+                    } catch (e) {
+                        console.error("Error loading cached file size config:", e);
+                    }
+                }
+            }
+        }
+        
+        // Get File Size from Firebase or Cache - UPDATED TO USE NEW STRUCTURE
+        async function getFileSize(movieId, serverName, quality, path, movieData = null) {
+            const t = translations[currentLanguage];
+            
+            // Generate a unique cache key
+            const cacheKey = `${movieId}_${serverName}_${quality}`.toLowerCase().replace(/\s+/g, '_');
+            
+            // Check cache first
+            if (fileSizesCache[cacheKey]) {
+                return fileSizesCache[cacheKey];
+            }
+            
+            // First, try to get file size directly from movie data (NEW APPROACH)
+            if (movieData && movieData.downloadOptions) {
+                for (const server of movieData.downloadOptions) {
+                    if (server.server === serverName && server.qualities) {
+                        for (const qualityOption of server.qualities) {
+                            if (qualityOption.quality_text === quality && qualityOption.file_size) {
+                                // Cache the result
+                                fileSizesCache[cacheKey] = qualityOption.file_size;
+                                localStorage.setItem('fileSizesCache', JSON.stringify(fileSizesCache));
+                                return qualityOption.file_size;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Check if online
+            if (!isOnline) {
+                // Return default size based on quality
+                const defaultSize = getDefaultFileSize(quality);
+                return defaultSize || t.loading_file_size;
+            }
+            
+            try {
+                // Try to get file size from Firebase (legacy approach)
+                const sizeDoc = await db.collection('fileSizes')
+                    .where('movieId', '==', movieId)
+                    .where('server', '==', serverName)
+                    .where('quality', '==', quality)
+                    .limit(1)
+                    .get();
+                
+                if (!sizeDoc.empty) {
+                    const sizeData = sizeDoc.docs[0].data();
+                    const fileSize = sizeData.size || getDefaultFileSize(quality);
+                    
+                    // Cache the result
+                    fileSizesCache[cacheKey] = fileSize;
+                    localStorage.setItem('fileSizesCache', JSON.stringify(fileSizesCache));
+                    
+                    return fileSize;
+                } else {
+                    // Try to get from path-based mapping
+                    const pathSize = await getFileSizeFromPath(path, quality);
+                    if (pathSize) {
+                        fileSizesCache[cacheKey] = pathSize;
+                        localStorage.setItem('fileSizesCache', JSON.stringify(fileSizesCache));
+                        return pathSize;
+                    }
+                }
+            } catch (error) {
+                console.error("Error getting file size:", error);
+            }
+            
+            // Fallback to default size
+            const defaultSize = getDefaultFileSize(quality);
+            return defaultSize || t.loading_file_size;
+        }
+        
+        // Get File Size from Path Pattern
+        async function getFileSizeFromPath(path, quality) {
+            if (!path) return null;
+            
+            try {
+                // Check if we have size mapping for this path pattern
+                for (const [pattern, size] of Object.entries(fileSizeConfig.sizeMapping)) {
+                    if (path.includes(pattern)) {
+                        return size;
+                    }
+                }
+                
+                // Check for quality-based mapping
+                if (fileSizeConfig.defaultSizes[quality]) {
+                    return fileSizeConfig.defaultSizes[quality];
+                }
+                
+                // Try to extract size from filename pattern (e.g., filename_1.2GB.mp4)
+                const sizeMatch = path.match(/(\d+(?:\.\d+)?)\s*(GB|MB|KB)/i);
+                if (sizeMatch) {
+                    return `${sizeMatch[1]}${sizeMatch[2].toUpperCase()}`;
+                }
+                
+            } catch (error) {
+                console.error("Error getting file size from path:", error);
+            }
+            
+            return null;
+        }
+        
+        // Get Default File Size based on Quality
+        function getDefaultFileSize(quality) {
+            if (!quality) return '1GB';
+            
+            const qualityLower = quality.toLowerCase();
+            
+            // Check for exact match
+            if (fileSizeConfig.defaultSizes[quality]) {
+                return fileSizeConfig.defaultSizes[quality];
+            }
+            
+            // Check for partial matches
+            for (const [key, size] of Object.entries(fileSizeConfig.defaultSizes)) {
+                if (qualityLower.includes(key.toLowerCase())) {
+                    return size;
+                }
+            }
+            
+            // Default mappings
+            const defaultMappings = {
+                '480': '700MB',
+                '720': '1.5GB',
+                '1080': '3GB',
+                '2160': '10GB',
+                '4k': '10GB',
+                'web': '2GB',
+                'bluray': '4GB',
+                'hdtv': '1.2GB',
+                'hd': '1GB',
+                'sd': '500MB'
+            };
+            
+            for (const [key, size] of Object.entries(defaultMappings)) {
+                if (qualityLower.includes(key)) {
+                    return size;
+                }
+            }
+            
+            return '1GB';
+        }
+        
+        // Load Link Generators from Firebase
+        async function loadLinkGenerators() {
+            try {
+                const generatorsDoc = await db.collection('config').doc('linkGenerators').get();
+                if (generatorsDoc.exists) {
+                    const data = generatorsDoc.data();
+                    linkGenerators = data.generators || [];
+                } else {
+                    linkGenerators = [
+                        {
+                            name: "Default Generator",
+                            pattern: "{domain}/{path}",
+                            priority: 1,
+                            enabled: true
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error("Error loading link generators:", error);
+            }
+        }
+        
+        // Load Link Patterns from Firebase
+        async function loadLinkPatterns() {
+            try {
+                const patternsDoc = await db.collection('config').doc('linkPatterns').get();
+                if (patternsDoc.exists) {
+                    const data = patternsDoc.data();
+                    linkPatterns = data.patterns || [];
+                } else {
+                    linkPatterns = [
+                        {
+                            pattern: "/movies/{id}/{filename}",
+                            type: "direct",
+                            priority: 1
+                        },
+                        {
+                            pattern: "/download/{id}/{quality}",
+                            type: "direct",
+                            priority: 2
+                        }
+                    ];
+                }
+            } catch (error) {
+                console.error("Error loading link patterns:", error);
+            }
+        }
+        
+        // Update Connection Status Display
+        function updateConnectionStatus(online) {
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionText = document.getElementById('connectionText');
+            const t = translations[currentLanguage];
+            
+            if (!connectionStatus || !connectionText) return;
+            
+            if (online) {
+                connectionStatus.className = 'connection-status online show';
+                connectionText.textContent = t.connectionOnline;
+                
+                setTimeout(() => {
+                    if (isOnline) {
+                        connectionStatus.classList.remove('show');
+                    }
+                }, 3000);
+            } else {
+                connectionStatus.className = 'connection-status offline show';
+                connectionText.textContent = t.connectionOffline;
+            }
+        }
+        
+        // Show Syncing Status
+        function showSyncingStatus() {
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectionText = document.getElementById('connectionText');
+            const t = translations[currentLanguage];
+            
+            if (!connectionStatus || !connectionText) return;
+            
+            connectionStatus.className = 'connection-status syncing show';
+            connectionText.textContent = t.connectionSyncing;
+        }
+        
+        // Check Server Connection
+        async function checkServerConnection() {
+            if (!isOnline) return;
+            
+            try {
+                await db.collection('config').doc('settings').get({
+                    source: 'server',
+                    timeout: 5000
+                }).then(() => {
+                    if (!isOnline) {
+                        isOnline = true;
+                        updateConnectionStatus(true);
+                    }
+                }).catch(() => {
+                    if (isOnline) {
+                        isOnline = false;
+                        updateConnectionStatus(false);
+                    }
+                });
+            } catch (error) {
+                console.log("Connection check failed:", error);
+            }
+        }
+        
+        // Auto Sync Data when connection is restored
+        async function autoSyncData() {
+            if (!isOnline || !autoUpdateEnabled) return;
+            
+            showSyncingStatus();
+            
+            try {
+                await Promise.all([
+                    checkForMovieUpdates(),
+                    checkForSliderUpdates(),
+                    checkForConfigUpdates(),
+                    syncPendingViews(),
+                    updateFileSizeCache()
+                ]);
+                
+                updateConnectionStatus(true);
+                
+                if (await checkForUpdates()) {
+                    showNotification("Content updated successfully");
+                }
+                
+            } catch (error) {
+                console.error("Auto-sync error:", error);
+                updateConnectionStatus(true);
+            }
+        }
+        
+        // Update File Size Cache from Firebase
+        async function updateFileSizeCache() {
+            if (!isOnline) return;
+            
+            try {
+                // Get recent file sizes
+                const sizesSnapshot = await db.collection('fileSizes')
+                    .orderBy('updatedAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                if (!sizesSnapshot.empty) {
+                    sizesSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        const cacheKey = `${data.movieId}_${data.server}_${data.quality}`.toLowerCase().replace(/\s+/g, '_');
+                        fileSizesCache[cacheKey] = data.size;
+                    });
+                    
+                    localStorage.setItem('fileSizesCache', JSON.stringify(fileSizesCache));
+                }
+            } catch (error) {
+                console.error("Error updating file size cache:", error);
+            }
+        }
+        
+        // Check for any updates
+        async function checkForUpdates() {
+            try {
+                const updateRef = realtimeDb.ref('lastUpdate');
+                const snapshot = await updateRef.once('value');
+                const serverLastUpdate = snapshot.val() || 0;
+                
+                if (serverLastUpdate > lastUpdateCheck) {
+                    lastUpdateCheck = serverLastUpdate;
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error checking updates:", error);
+                return false;
+            }
+        }
+        
+        // Check for movie updates
+        async function checkForMovieUpdates() {
+            if (!isOnline) return;
+            
+            try {
+                const latestMovieQuery = await db.collection('movies')
+                    .orderBy('createdAt', 'desc')
+                    .limit(1)
+                    .get();
+                
+                if (!latestMovieQuery.empty) {
+                    const latestMovie = latestMovieQuery.docs[0];
+                    const latestTimestamp = latestMovie.data().createdAt;
+                    
+                    localStorage.setItem('lastMovieUpdate', latestTimestamp.toMillis());
+                }
+            } catch (error) {
+                console.error("Error checking movie updates:", error);
+            }
+        }
+        
+        // Check for slider updates
+        async function checkForSliderUpdates() {
+            if (!isOnline) return;
+            
+            try {
+                await loadSlider();
+            } catch (error) {
+                console.error("Error checking slider updates:", error);
+            }
+        }
+        
+        // Check for config updates
+        async function checkForConfigUpdates() {
+            if (!isOnline) return;
+            
+            try {
+                await Promise.all([
+                    loadGlobalSettings(),
+                    loadAdsConfig(),
+                    loadSiteConfig(),
+                    loadDownloadServers(),
+                    loadTimerSettings(),
+                    loadLinkGenerators(),
+                    loadLinkPatterns(),
+                    loadFileSizeConfig()
+                ]);
+                
+                updateSiteLogo();
+                loadAds();
+                
+            } catch (error) {
+                console.error("Error checking config updates:", error);
+            }
+        }
+        
+        // Sync pending views to Firebase
+        async function syncPendingViews() {
+            if (!isOnline) return;
+            
+            try {
+                const pendingUpdates = JSON.parse(localStorage.getItem('pendingViewUpdates') || '[]');
+                
+                if (pendingUpdates.length > 0) {
+                    for (const update of pendingUpdates) {
+                        try {
+                            const movieRef = db.collection('movies').doc(update.movieId);
+                            await movieRef.update({
+                                total_views: firebase.firestore.FieldValue.increment(1)
+                            });
+                        } catch (error) {
+                            console.error("Error syncing view:", error);
+                        }
+                    }
+                    
+                    localStorage.removeItem('pendingViewUpdates');
+                }
+            } catch (error) {
+                console.error("Error syncing pending views:", error);
+            }
+        }
+        
+        // Initialize App
+        async function initializeApp() {
+            try {
+                await Promise.all([
+                    loadGlobalSettings().catch(err => {
+                        console.error("Failed to load global settings:", err);
+                        globalDomains = [];
+                    }),
+                    loadAdsConfig().catch(err => {
+                        console.error("Failed to load ads config:", err);
+                    }),
+                    loadSiteConfig().catch(err => {
+                        console.error("Failed to load site config:", err);
+                    }),
+                    loadDownloadServers().catch(err => {
+                        console.error("Failed to load download servers:", err);
+                        downloadServers = [];
+                    }),
+                    loadTimerSettings().catch(err => {
+                        console.error("Failed to load timer settings:", err);
+                        timerDuration = 10;
+                        requiredAds = 3;
+                    }),
+                    loadLinkGenerators().catch(err => {
+                        console.error("Failed to load link generators:", err);
+                    }),
+                    loadLinkPatterns().catch(err => {
+                        console.error("Failed to load link patterns:", err);
+                    }),
+                    loadFileSizeConfig().catch(err => {
+                        console.error("Failed to load file size config:", err);
+                    })
+                ]);
+                
+                await loadSlider();
+                loadMovies();
+                checkMonetagSDK();
+                
+                lastUpdateCheck = Date.now();
+                
+            } catch (error) {
+                console.error("Failed to initialize app:", error);
+                if (isOnline) {
+                    showNotification("Failed to initialize app. Please check your connection.", true);
+                }
+                loadMovies();
+            }
+        }
+        
+        // Load Slider Images from Firebase
+        async function loadSlider() {
+            const sliderWrapper = document.getElementById('sliderWrapper');
+            const sliderDots = document.getElementById('sliderDots');
+            const sliderSection = document.getElementById('sliderSection');
+            
+            if (!sliderWrapper || !sliderDots || !sliderSection) {
+                console.error("Slider elements not found");
+                return;
+            }
+            
+            try {
+                const t = translations[currentLanguage];
+                
+                sliderWrapper.innerHTML = '';
+                sliderDots.innerHTML = '';
+                
+                const querySnapshot = await db.collection('sliders')
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                if (querySnapshot.empty) {
+                    sliderWrapper.innerHTML = `
+                        <div class="slider-item">
+                            <div class="slider-loading">
+                                <p>${t.noSlides}</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                sliderItems = [];
+                querySnapshot.forEach(doc => {
+                    const slide = doc.data();
+                    sliderItems.push(slide);
+                });
+                
+                sliderItems.forEach((slide, index) => {
+                    const slideElement = document.createElement('div');
+                    slideElement.className = 'slider-item';
+                    
+                    if (slide.linkUrl && slide.linkUrl.trim() !== '') {
+                        slideElement.innerHTML = `
+                            <a href="${slide.linkUrl}" target="_blank" rel="noopener noreferrer">
+                                <img src="${slide.imageUrl}" 
+                                     alt="Promotional Slide ${index + 1}"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/1280x400/cccccc/ffffff?text=Image+Not+Found'">
+                            </a>
+                        `;
+                    } else {
+                        slideElement.innerHTML = `
+                            <img src="${slide.imageUrl}" 
+                                 alt="Promotional Slide ${index + 1}"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/1280x400/cccccc/ffffff?text=Image+Not+Found'">
+                        `;
+                    }
+                    
+                    sliderWrapper.appendChild(slideElement);
+                    
+                    const dot = document.createElement('div');
+                    dot.className = 'slider-dot';
+                    dot.dataset.index = index;
+                    sliderDots.appendChild(dot);
+                });
+                
+                if (sliderItems.length > 1) {
+                    setupSlider();
+                } else if (sliderItems.length === 1) {
+                    document.querySelector('.slider-dot').classList.add('active');
+                }
+                
+            } catch (error) {
+                console.error("Error loading slider:", error);
+                if (isOnline) {
+                    const t = translations[currentLanguage];
+                    sliderWrapper.innerHTML = `
+                        <div class="slider-item">
+                            <div class="slider-error">
+                                <p>${t.slidesError}</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Setup Slider Functionality
+        function setupSlider() {
+            const sliderWrapper = document.getElementById('sliderWrapper');
+            const sliderDots = document.getElementById('sliderDots');
+            const dots = sliderDots.querySelectorAll('.slider-dot');
+            const prevBtn = document.getElementById('sliderPrev');
+            const nextBtn = document.getElementById('sliderNext');
+            
+            if (!sliderWrapper || sliderItems.length <= 1) return;
+            
+            if (sliderInterval) {
+                clearInterval(sliderInterval);
+            }
+            
+            currentSlide = 0;
+            updateSlider();
+            
+            sliderInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    prevSlide();
+                    resetAutoSlide();
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                    resetAutoSlide();
+                });
+            }
+            
+            dots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const slideIndex = parseInt(dot.dataset.index);
+                    goToSlide(slideIndex);
+                    resetAutoSlide();
+                });
+            });
+            
+            const sliderContainer = document.getElementById('sliderContainer');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', () => {
+                    if (sliderInterval) {
+                        clearInterval(sliderInterval);
+                    }
+                });
+                
+                sliderContainer.addEventListener('mouseleave', () => {
+                    resetAutoSlide();
+                });
+            }
+        }
+        
+        // Go to specific slide
+        function goToSlide(slideIndex) {
+            if (slideIndex < 0) slideIndex = sliderItems.length - 1;
+            if (slideIndex >= sliderItems.length) slideIndex = 0;
+            
+            currentSlide = slideIndex;
+            updateSlider();
+        }
+        
+        // Go to next slide
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+        
+        // Go to previous slide
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+        
+        // Update slider position and active dot
+        function updateSlider() {
+            const sliderWrapper = document.getElementById('sliderWrapper');
+            const dots = document.querySelectorAll('.slider-dot');
+            
+            if (!sliderWrapper) return;
+            
+            sliderWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Reset auto slide timer
+        function resetAutoSlide() {
+            if (sliderInterval) {
+                clearInterval(sliderInterval);
+            }
+            
+            if (sliderItems.length > 1) {
+                sliderInterval = setInterval(() => {
+                    nextSlide();
+                }, 5000);
+            }
+        }
         
         // Language Functions
         function setLanguage(lang) {
-            currentLanguage = lang;
-            localStorage.setItem('movieAppLanguage', lang);
+            try {
+                currentLanguage = lang;
+                localStorage.setItem('movieAppLanguage', lang);
+                
+                const t = translations[lang];
+                
+                const elements = [
+                    { id: 'currentLang', text: t.language },
+                    { id: 'appTitle', text: t.appTitle },
+                    { id: 'sectionTitle', text: t.sectionTitle },
+                    { id: 'loadingText', text: t.loadingMovies },
+                    { id: 'loadMoreText', text: t.loadMore },
+                    { id: 'screenshotsTitle', text: t.screenshots },
+                    { id: 'downloadTitle', text: t.downloadOptions },
+                    { id: 'loadingOptions', text: t.loadingOptions }
+                ];
+                
+                elements.forEach(item => {
+                    const element = document.getElementById(item.id);
+                    if (element) {
+                        element.textContent = item.text;
+                    }
+                });
+                
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.placeholder = t.searchPlaceholder;
+                }
+                
+                updateConnectionStatus(isOnline);
+                updateFooter();
+                updateMovieCardsLanguage();
+                loadSlider();
+                
+            } catch (error) {
+                console.error("Error in setLanguage:", error);
+            }
+        }
+        
+        function updateFooter() {
+            try {
+                const t = translations[currentLanguage];
+                const footerText = document.querySelector('.footer-text');
+                if (footerText) {
+                    footerText.innerHTML = `${t.footerText.replace('{siteName}', siteConfig.siteName)}<br><small>${t.disclaimer}</small>`;
+                }
+                
+                const footerSiteName = document.getElementById('footerSiteName');
+                if (footerSiteName) {
+                    footerSiteName.textContent = siteConfig.siteName;
+                }
+            } catch (error) {
+                console.error("Error updating footer:", error);
+            }
+        }
+        
+        function updateMovieCardsLanguage() {
+            const t = translations[currentLanguage];
+            const viewElements = document.querySelectorAll('.views-count span');
             
-            const t = translations[lang];
+            viewElements.forEach(element => {
+                const text = element.textContent;
+                const match = text.match(/([\d.]+[KMB]?)\s*/);
+                if (match) {
+                    element.textContent = `${match[1]} ${t.views}`;
+                }
+            });
             
-            // Update all text elements
-            document.getElementById('currentLang').textContent = t.language;
-            document.getElementById('appTitle').textContent = t.appTitle;
-            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-            document.getElementById('sectionTitle').textContent = t.sectionTitle;
-            document.getElementById('loadingText').textContent = t.loadingMovies;
-            document.getElementById('loadMoreText').textContent = t.loadMore;
-            document.getElementById('screenshotsTitle').textContent = t.screenshots;
-            document.getElementById('downloadTitle').textContent = t.downloadOptions;
-            document.getElementById('loadingOptions').textContent = t.loadingOptions;
+            const statusElements = document.querySelectorAll('.status span');
+            statusElements.forEach(element => {
+                if (element.textContent.toLowerCase().includes('status') || element.textContent === 'স্ট্যাটাস') {
+                    element.textContent = t.status;
+                }
+            });
         }
         
         function toggleLanguage() {
             const newLang = currentLanguage === 'en' ? 'bn' : 'en';
             setLanguage(newLang);
-            
-            // Reload movies to update language in cards
-            if (document.getElementById('moviesGrid').children.length > 0) {
-                const currentQuery = document.getElementById('searchInput').value;
-                if (currentQuery) {
-                    searchMovies(currentQuery);
+            reloadMoviesWithCurrentLanguage();
+        }
+        
+        // Reload movies with current language
+        async function reloadMoviesWithCurrentLanguage() {
+            try {
+                const scrollPos = window.scrollY;
+                
+                const snapshot = await db.collection('movies')
+                    .orderBy('createdAt', 'desc')
+                    .limit(10)
+                    .get();
+                
+                const moviesGrid = document.getElementById('moviesGrid');
+                if (!moviesGrid) return;
+                
+                moviesGrid.innerHTML = '';
+                
+                let movieCount = 0;
+                snapshot.forEach(doc => {
+                    const movie = doc.data();
+                    movie.id = doc.id;
+                    createMovieCard(movie, movieCount);
+                    movieCount++;
+                });
+                
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = snapshot.docs.length < 10;
+                }
+                
+                setTimeout(() => {
+                    window.scrollTo(0, scrollPos);
+                }, 100);
+                
+            } catch (error) {
+                console.error("Error reloading movies:", error);
+            }
+        }
+        
+        // Load Download Servers
+        async function loadDownloadServers() {
+            try {
+                const serversDoc = await db.collection('config').doc('downloadServers').get();
+                if (serversDoc.exists) {
+                    const data = serversDoc.data();
+                    downloadServers = data.servers || [];
                 } else {
-                    loadMovies(true); // Reload without resetting
+                    downloadServers = [];
+                }
+            } catch (error) {
+                console.error("Error loading download servers:", error);
+                downloadServers = [];
+            }
+        }
+        
+        // Load Global Settings
+        async function loadGlobalSettings() {
+            try {
+                const settingsDoc = await db.collection('config').doc('settings').get();
+                if (settingsDoc.exists) {
+                    const data = settingsDoc.data();
+                    if (data.globalDomains && Array.isArray(data.globalDomains)) {
+                        globalDomains = data.globalDomains
+                            .map(d => {
+                                if (typeof d === 'string') {
+                                    return { url: d, priority: 1 };
+                                }
+                                if (d && typeof d === 'object') {
+                                    return {
+                                        url: d.url || d,
+                                        priority: d.priority || 1
+                                    };
+                                }
+                                return null;
+                            })
+                            .filter(d => d && d.url && d.url.trim())
+                            .sort((a, b) => a.priority - b.priority)
+                            .map(d => d.url.replace(/\/$/, ''));
+                    } else {
+                        globalDomains = [];
+                    }
+                } else {
+                    globalDomains = [];
+                }
+            } catch (error) {
+                console.error("Error loading global settings:", error);
+                globalDomains = [];
+            }
+        }
+        
+        // Get Download URL
+        function getDownloadUrl(path, serverName = '', movieData = null) {
+            if (!path) return '';
+            
+            if (path.startsWith('http://') || path.startsWith('https://')) {
+                return path;
+            }
+            
+            let finalUrl = '';
+            
+            if (serverName && downloadServers && downloadServers.length > 0) {
+                const server = downloadServers.find(s => s && s.name === serverName);
+                if (server && server.domains && Array.isArray(server.domains) && server.domains.length > 0) {
+                    const sortedDomains = [...server.domains]
+                        .map(d => {
+                            if (typeof d === 'string') {
+                                return { url: d, priority: 1 };
+                            }
+                            return { url: d.url || d, priority: d.priority || 1 };
+                        })
+                        .filter(d => d.url && d.url.trim())
+                        .sort((a, b) => a.priority - b.priority);
+                    
+                    for (const domain of sortedDomains) {
+                        if (domain.url && domain.url.trim()) {
+                            const cleanDomain = domain.url.replace(/\/$/, '');
+                            const cleanPath = path.startsWith('/') ? path : '/' + path;
+                            finalUrl = cleanDomain + cleanPath;
+                            break;
+                        }
+                    }
                 }
             }
+            
+            if (!finalUrl && globalDomains && globalDomains.length > 0) {
+                for (const domain of globalDomains) {
+                    if (domain && domain.trim()) {
+                        const cleanDomain = domain.replace(/\/$/, '');
+                        const cleanPath = path.startsWith('/') ? path : '/' + path;
+                        finalUrl = cleanDomain + cleanPath;
+                        break;
+                    }
+                }
+            }
+            
+            if (!finalUrl && movieData) {
+                finalUrl = generateDownloadLink(path, serverName, movieData);
+            }
+            
+            return finalUrl || path;
+        }
+        
+        // Generate Download Link using patterns
+        function generateDownloadLink(path, serverName, movieData) {
+            const t = translations[currentLanguage];
+            
+            for (const pattern of linkPatterns) {
+                try {
+                    let generatedPath = pattern.pattern;
+                    
+                    if (movieData.id) {
+                        generatedPath = generatedPath.replace(/{id}/g, movieData.id);
+                    }
+                    if (movieData.title) {
+                        const safeTitle = movieData.title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                        generatedPath = generatedPath.replace(/{title}/g, safeTitle);
+                    }
+                    if (path) {
+                        generatedPath = generatedPath.replace(/{path}/g, path);
+                    }
+                    if (serverName) {
+                        generatedPath = generatedPath.replace(/{server}/g, serverName.toLowerCase());
+                    }
+                    
+                    const domains = [...globalDomains];
+                    if (serverName && downloadServers) {
+                        const server = downloadServers.find(s => s && s.name === serverName);
+                        if (server && server.domains) {
+                            domains.unshift(...server.domains.map(d => typeof d === 'string' ? d : d.url));
+                        }
+                    }
+                    
+                    for (const domain of domains) {
+                        if (domain && domain.trim()) {
+                            const cleanDomain = domain.replace(/\/$/, '');
+                            const cleanPath = generatedPath.startsWith('/') ? generatedPath : '/' + generatedPath;
+                            return cleanDomain + cleanPath;
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error generating link:", error);
+                }
+            }
+            
+            return '';
+        }
+        
+        // Get File Extension from path
+        function getFileExtension(path) {
+            if (!path) return '';
+            const parts = path.split('.');
+            return parts.length > 1 ? '.' + parts.pop().toLowerCase() : '';
+        }
+        
+        // Get Download Type
+        function getDownloadType(path) {
+            const ext = getFileExtension(path);
+            if (ext === '.mpd' || ext === '.m3u8') {
+                return 'streaming';
+            }
+            return 'direct';
         }
         
         // Load Timer Settings from Firebase
@@ -1307,7 +2721,6 @@
                     const data = docSnap.data();
                     timerDuration = data.timerDuration || 10;
                     requiredAds = data.requiredAds || 3;
-                    console.log("Loaded timer settings:", timerDuration, "seconds, required ads:", requiredAds);
                 }
             } catch (error) {
                 console.error("Could not fetch timer settings, using defaults.", error);
@@ -1321,69 +2734,19 @@
                     monetagSDKLoaded = true;
                     console.log("Monetag SDK loaded successfully");
                 } else {
-                    console.log("Monetag SDK not loaded, retrying...");
-                    checkMonetagSDK();
-                }
-            }, 1000);
-        }
-        
-        // Load Global Settings - Download Domains
-        async function loadGlobalSettings() {
-            try {
-                const settingsDoc = await db.collection('config').doc('settings').get();
-                if (settingsDoc.exists) {
-                    const data = settingsDoc.data();
-                    if (data.downloadDomains && Array.isArray(data.downloadDomains)) {
-                        downloadDomains = data.downloadDomains
-                            .sort((a, b) => (a.priority || 1) - (b.priority || 1))
-                            .map(d => d.url);
-                        console.log("Loaded download domains:", downloadDomains);
+                    let retryCount = localStorage.getItem('monetagRetryCount') || 0;
+                    if (retryCount < 3) {
+                        retryCount++;
+                        localStorage.setItem('monetagRetryCount', retryCount);
+                        setTimeout(checkMonetagSDK, 1000);
                     } else {
-                        // Fallback to single domain
-                        downloadDomains = [data.DOWNLOAD_BASE_DOMAIN || "https://www.example.com"];
+                        console.log("Monetag SDK failed to load after 3 retries");
+                        if (isOnline) {
+                            showNotification("Ads system not available. Please refresh.", true);
+                        }
                     }
                 }
-            } catch (error) {
-                console.error("Error loading settings:", error);
-                downloadDomains = ["https://www.example.com"];
-            }
-        }
-        
-        // Get Download URL - Support for multiple domains and full URLs
-        function getDownloadUrl(path) {
-            // If path is already a full URL, return it
-            if (path.startsWith('http://') || path.startsWith('https://')) {
-                return path;
-            }
-            
-            // If no domains configured, return path as is
-            if (downloadDomains.length === 0) {
-                return path;
-            }
-            
-            // Try domains in order of priority
-            for (const domain of downloadDomains) {
-                if (domain && domain.trim()) {
-                    // Remove trailing slash from domain if present
-                    const cleanDomain = domain.replace(/\/$/, '');
-                    // Ensure path starts with slash
-                    const cleanPath = path.startsWith('/') ? path : '/' + path;
-                    const fullUrl = cleanDomain + cleanPath;
-                    
-                    // Test if this domain works by creating a test request
-                    console.log("Trying domain:", fullUrl);
-                    return fullUrl;
-                }
-            }
-            
-            // Fallback to first domain
-            if (downloadDomains.length > 0) {
-                const cleanDomain = downloadDomains[0].replace(/\/$/, '');
-                const cleanPath = path.startsWith('/') ? path : '/' + path;
-                return cleanDomain + cleanPath;
-            }
-            
-            return path;
+            }, 1000);
         }
         
         // Load Site Config
@@ -1392,14 +2755,16 @@
                 const siteConfigDoc = await db.collection('config').doc('siteConfig').get();
                 if (siteConfigDoc.exists) {
                     const data = siteConfigDoc.data();
-                    siteConfig.siteName = data.siteName || "Movie Hub";
+                    siteConfig.siteName = data.siteName || "Dub Fusion Hub";
                     siteConfig.siteLogoUrl = data.siteLogoUrl || "";
                     siteConfig.showLogo = data.showLogo || false;
                     siteConfig.placeholderImage = data.placeholderImage || "https://via.placeholder.com/300x450/1a1a2e/ffffff?text=No+Image";
                     siteConfig.enablePosterBlur = data.enablePosterBlur || false;
                     siteConfig.blurPercentage = data.blurPercentage || 10;
+                    siteConfig.showInfo5Views = data.showInfo5Views !== undefined ? data.showInfo5Views : true;
                     
                     updateSiteLogo();
+                    updateFooter();
                 }
             } catch (error) {
                 console.error("Error loading site config:", error);
@@ -1408,46 +2773,49 @@
         
         // Update Site Logo
         function updateSiteLogo() {
-            const logoElement = document.getElementById('siteLogo');
-            const appTitleElement = document.getElementById('appTitle');
-            
-            // Clear existing content
-            logoElement.innerHTML = '';
-            
-            if (siteConfig.showLogo && siteConfig.siteLogoUrl) {
-                // Show logo image
-                const logoImg = document.createElement('img');
-                logoImg.src = siteConfig.siteLogoUrl;
-                logoImg.alt = siteConfig.siteName;
-                logoImg.style.height = '40px';
-                logoImg.style.width = 'auto';
-                logoImg.style.objectFit = 'contain';
-                logoElement.appendChild(logoImg);
-            } else {
-                // Show site name with icon
-                const icon = document.createElement('i');
-                icon.className = 'fas fa-film';
-                icon.style.color = 'var(--highlight)';
+            try {
+                const logoElement = document.getElementById('siteLogo');
+                const appTitleElement = document.getElementById('appTitle');
                 
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = siteConfig.siteName;
-                nameSpan.id = 'appTitle';
+                if (!logoElement) return;
                 
-                logoElement.appendChild(icon);
-                logoElement.appendChild(nameSpan);
+                logoElement.innerHTML = '';
+                
+                if (siteConfig.showLogo && siteConfig.siteLogoUrl) {
+                    const logoImg = document.createElement('img');
+                    logoImg.src = siteConfig.siteLogoUrl;
+                    logoImg.alt = siteConfig.siteName;
+                    logoImg.style.height = '40px';
+                    logoImg.style.width = 'auto';
+                    logoImg.style.objectFit = 'contain';
+                    logoElement.appendChild(logoImg);
+                } else {
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-film';
+                    icon.style.color = 'var(--highlight)';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = siteConfig.siteName;
+                    nameSpan.id = 'appTitle';
+                    
+                    logoElement.appendChild(icon);
+                    logoElement.appendChild(nameSpan);
+                }
+                
+                if (appTitleElement) {
+                    appTitleElement.textContent = siteConfig.siteName;
+                }
+            } catch (error) {
+                console.error("Error updating site logo:", error);
             }
-            
-            // Update app title text
-            appTitleElement.textContent = siteConfig.siteName;
         }
         
-        // Load Ads Config - FIXED VERSION
+        // Load Ads Config
         async function loadAdsConfig() {
             try {
                 const adsDoc = await db.collection('adsConfig').doc('current').get();
                 if (adsDoc.exists) {
                     const data = adsDoc.data();
-                    // Use the correct field names from your Firebase
                     adsConfig = {
                         ads1: data.ads1 || { enabled: true, code: '' },
                         ads2: data.ads2 || { enabled: true, code: '' },
@@ -1457,44 +2825,42 @@
                         ads6: data.ads6 || { enabled: true, code: '' }
                     };
                     
-                    console.log("Loaded ads config:", adsConfig);
-                    
-                    // Load ads if enabled
                     loadAds();
-                } else {
-                    console.log("No ads config found, using defaults");
-                    loadAds(); // Load with default empty ads
                 }
             } catch (error) {
                 console.error("Error loading ads config:", error);
-                loadAds(); // Load with default empty ads even on error
+                loadAds();
             }
         }
         
-        // Load Ads - FIXED VERSION
+        // Load Ads
         function loadAds() {
-            const t = translations[currentLanguage];
-            
-            // Ads 1 - Header Banner
-            const ads1Container = document.getElementById('ads1-container');
-            if (adsConfig.ads1 && adsConfig.ads1.enabled && adsConfig.ads1.code) {
-                ads1Container.style.display = 'block';
-                document.getElementById('ads1').innerHTML = adsConfig.ads1.code;
-                console.log("Loaded Ads 1");
-            } else {
-                ads1Container.style.display = 'none';
-                console.log("Ads 1 disabled or no code");
+            try {
+                for (let i = 1; i <= 6; i++) {
+                    if (i === 4) continue;
+                    
+                    const container = document.getElementById(`ads${i}-container`);
+                    const adElement = document.getElementById(`ads${i}`);
+                    
+                    if (container && adElement) {
+                        const adConfig = adsConfig[`ads${i}`];
+                        if (adConfig && adConfig.enabled && adConfig.code) {
+                            container.style.display = 'block';
+                            adElement.innerHTML = adConfig.code;
+                        } else {
+                            container.style.display = 'none';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading ads:", error);
             }
-            
-            // Ads 2 is loaded dynamically in modal
-            console.log("Ads config loaded successfully");
         }
         
-        // Show Unlock Ad (Using SDK)
+        // Show Unlock Ad
         async function showUnlockAd() {
             if (!monetagSDKLoaded) {
-                showNotification(translations[currentLanguage].toast_ad_error, true);
-                return Promise.reject("SDK not loaded");
+                throw new Error("SDK not loaded");
             }
             
             return new Promise((resolve, reject) => {
@@ -1513,6 +2879,8 @@
         // Load Movies
         async function loadMovies(loadMore = false) {
             const moviesGrid = document.getElementById('moviesGrid');
+            if (!moviesGrid) return;
+            
             const t = translations[currentLanguage];
             
             if (!loadMore) {
@@ -1522,6 +2890,25 @@
                         <p>${t.loadingMovies}</p>
                     </div>
                 `;
+            }
+            
+            if (!isOnline && !loadMore) {
+                const cachedMovies = localStorage.getItem('cachedMovies');
+                if (cachedMovies) {
+                    try {
+                        const movies = JSON.parse(cachedMovies);
+                        moviesGrid.innerHTML = '';
+                        
+                        movies.forEach((movie, index) => {
+                            createMovieCard(movie, index);
+                        });
+                        
+                        showNotification("You are offline. Showing cached content.", true);
+                        return;
+                    } catch (error) {
+                        console.error("Error loading cached movies:", error);
+                    }
+                }
             }
             
             try {
@@ -1539,7 +2926,8 @@
                     if (!loadMore) {
                         moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
                     }
-                    document.getElementById('loadMoreBtn').disabled = true;
+                    const loadMoreBtn = document.getElementById('loadMoreBtn');
+                    if (loadMoreBtn) loadMoreBtn.disabled = true;
                     return;
                 }
                 
@@ -1548,39 +2936,68 @@
                 }
                 
                 let movieCount = 0;
+                const moviesData = [];
+                
                 snapshot.forEach(doc => {
                     const movie = doc.data();
                     movie.id = doc.id;
                     createMovieCard(movie, movieCount);
+                    moviesData.push(movie);
                     movieCount++;
                 });
                 
+                if (!loadMore) {
+                    localStorage.setItem('cachedMovies', JSON.stringify(moviesData));
+                }
+                
                 lastVisible = snapshot.docs[snapshot.docs.length - 1];
                 
-                if (snapshot.docs.length < 10) {
-                    document.getElementById('loadMoreBtn').disabled = true;
-                } else {
-                    document.getElementById('loadMoreBtn').disabled = false;
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = snapshot.docs.length < 10;
                 }
                 
             } catch (error) {
                 console.error("Error loading movies:", error);
-                showNotification(t.notificationNetworkError, true);
+                
+                if (isOnline) {
+                    showNotification(t.notificationNetworkError, true);
+                }
+                
+                if (!loadMore) {
+                    const cachedMovies = localStorage.getItem('cachedMovies');
+                    if (cachedMovies) {
+                        try {
+                            const movies = JSON.parse(cachedMovies);
+                            const moviesGrid = document.getElementById('moviesGrid');
+                            if (moviesGrid) {
+                                moviesGrid.innerHTML = '';
+                                
+                                movies.forEach((movie, index) => {
+                                    createMovieCard(movie, index);
+                                });
+                            }
+                        } catch (cacheError) {
+                            console.error("Error loading cached movies:", cacheError);
+                        }
+                    }
+                }
             }
         }
         
-        // Create Movie Card with blur functionality
+        // Create Movie Card
         function createMovieCard(movie, index) {
             const moviesGrid = document.getElementById('moviesGrid');
+            if (!moviesGrid) return;
+            
             const t = translations[currentLanguage];
             
-            // Add Ads 3 after every 5 movies
             if (index > 0 && index % 5 === 0 && adsConfig.ads3.enabled && adsConfig.ads3.code) {
                 const adContainer = document.createElement('div');
                 adContainer.className = 'ads-section';
                 adContainer.style.gridColumn = '1 / -1';
                 adContainer.innerHTML = `
-                    <div class="ads-container ads-square" id="ads3-${index/5}">
+                    <div class="ads-container ads-square">
                         ${adsConfig.ads3.code}
                     </div>
                 `;
@@ -1592,9 +3009,9 @@
             card.dataset.id = movie.id;
             
             const posterUrl = movie.imageUrl || siteConfig.placeholderImage;
-            const viewCount = (movie.info5_views || 0) + (movie.localViews || 0);
             
-            // Determine custom badge text
+            const serverViews = Number(movie.total_views) || 0;
+            
             let customBadgeText = '';
             if (movie.info1_custom) {
                 customBadgeText = movie.info1_custom;
@@ -1604,7 +3021,6 @@
                 customBadgeText = 'UPDATED';
             }
             
-            // Check if blur should be applied
             const shouldApplyBlur = (movie.enablePosterBlur !== undefined ? movie.enablePosterBlur : siteConfig.enablePosterBlur);
             const blurValue = (movie.enablePosterBlur !== undefined ? movie.blurPercentage : siteConfig.blurPercentage) || 10;
             
@@ -1648,7 +3064,7 @@
                     <div class="movie-meta">
                         <div class="views-count">
                             <i class="fas fa-eye"></i>
-                            <span>${viewCount} ${t.views}</span>
+                            <span>${formatViewCount(serverViews)} ${t.views}</span>
                         </div>
                         <div class="status">
                             <i class="fas fa-circle"></i>
@@ -1666,6 +3082,17 @@
             moviesGrid.appendChild(card);
         }
         
+        // Format view count
+        function formatViewCount(count) {
+            if (count >= 1000000) {
+                return (count / 1000000).toFixed(1) + 'M';
+            }
+            if (count >= 1000) {
+                return (count / 1000).toFixed(1) + 'K';
+            }
+            return count.toString();
+        }
+        
         // Check if within specific days
         function isWithinDays(timestamp, days) {
             if (!timestamp) return false;
@@ -1680,7 +3107,6 @@
         function hasNewServerWithinDays(movie, days) {
             if (!movie.downloadOptions || !movie.serverAddedDate) return false;
             
-            // Check serverAddedDate for new servers
             const serverDate = movie.serverAddedDate;
             if (Array.isArray(serverDate)) {
                 for (const date of serverDate) {
@@ -1695,139 +3121,138 @@
             return false;
         }
         
-        // Increment View Count (Once per day per movie) and update Firebase
+        // Increment View Count
         async function incrementViewCount(movieId) {
             const today = new Date().toDateString();
             
-            // Initialize daily views if not exists
             if (!dailyViews[today]) {
                 dailyViews[today] = {};
             }
             
-            // Check if already viewed today
             if (!dailyViews[today][movieId]) {
-                // Increment local view count
                 movieViews[movieId] = (movieViews[movieId] || 0) + 1;
-                
-                // Mark as viewed today
                 dailyViews[today][movieId] = true;
                 
-                // Save to localStorage
                 localStorage.setItem('movieViews', JSON.stringify(movieViews));
                 localStorage.setItem('dailyViews', JSON.stringify(dailyViews));
                 
-                // Update UI
-                updateViewCountUI(movieId);
-                
-                // Update Firebase
-                try {
-                    const movieRef = db.collection('movies').doc(movieId);
-                    await movieRef.update({
-                        localViews: firebase.firestore.FieldValue.increment(1)
+                if (isOnline) {
+                    try {
+                        const movieRef = db.collection('movies').doc(movieId);
+                        await movieRef.update({
+                            total_views: firebase.firestore.FieldValue.increment(1)
+                        });
+                    } catch (error) {
+                        console.error("Error updating view count in Firebase:", error);
+                    }
+                } else {
+                    const pendingUpdates = JSON.parse(localStorage.getItem('pendingViewUpdates') || '[]');
+                    pendingUpdates.push({
+                        movieId: movieId,
+                        timestamp: Date.now()
                     });
-                } catch (error) {
-                    console.error("Error updating view count in Firebase:", error);
+                    localStorage.setItem('pendingViewUpdates', JSON.stringify(pendingUpdates));
                 }
             }
         }
         
-        // Update View Count UI
-        function updateViewCountUI(movieId) {
-            const card = document.querySelector(`.movie-card[data-id="${movieId}"]`);
-            if (card) {
-                const viewsCountElement = card.querySelector('.views-count span');
-                if (viewsCountElement) {
-                    const t = translations[currentLanguage];
-                    const localViews = movieViews[movieId] || 0;
-                    // Note: We don't have server views here without fetching from Firebase
-                    // So we just show local views + "..." for server views
-                    viewsCountElement.textContent = `${localViews}+ ${t.views}`;
-                }
-            }
-        }
-        
-        // Open Movie Modal with New UI
+        // Open Movie Modal
         async function openMovieModal(movie) {
             currentMovieId = movie.id;
             const t = translations[currentLanguage];
             
-            // Set modal title and subtitle
             document.getElementById('modalMovieTitle').textContent = movie.title || 'Untitled Movie';
             
-            // Set subtitle (info2_quality + info4_type)
-            const subtitle = (movie.info2_quality || 'WEB-DL') + ' | ' + (movie.info4_type || 'Movie');
+            let subtitle = '';
+            if (movie.info_subtitle && movie.info_subtitle.trim() !== '') {
+                subtitle = movie.info_subtitle;
+            } else {
+                subtitle = (movie.info2_quality || 'WEB-DL') + ' | ' + (movie.info4_type || 'Movie');
+            }
             document.getElementById('modalMovieSubtitle').textContent = subtitle;
             
-            // Set Type, Language, Quality in header
             document.getElementById('modalTypeValue').textContent = movie.info4_type || 'Movie';
             document.getElementById('modalLanguageValue').textContent = movie.info3_language || 'Dual [Hindi–Tamil]';
             document.getElementById('modalQualityValue').textContent = movie.info2_quality || 'WEB-DL';
             
-            // Set detailed information with fallback to "N/A"
-            document.getElementById('modalIMDb').textContent = movie.imdb || 'N/A';
-            document.getElementById('modalGenre').textContent = movie.genre || 'N/A';
-            document.getElementById('modalLanguageDetail').textContent = movie.info3_language || 'N/A';
-            document.getElementById('modalQualityDetail').textContent = movie.info2_quality || 'N/A';
-            document.getElementById('modalResolution').textContent = movie.resolution || 'N/A';
-            document.getElementById('modalReleased').textContent = movie.released || 'N/A';
-            document.getElementById('modalCast').textContent = movie.cast || 'N/A';
-            document.getElementById('modalStoryline').textContent = movie.storyline || 'No storyline available.';
+            const details = {
+                'modalIMDb': movie.imdb || 'N/A',
+                'modalGenre': movie.genre || 'N/A',
+                'modalLanguageDetail': movie.info3_language || 'N/A',
+                'modalQualityDetail': movie.info2_quality || 'N/A',
+                'modalResolution': movie.resolution || 'N/A',
+                'modalReleased': movie.released || 'N/A',
+                'modalCast': movie.cast || 'N/A',
+                'modalStoryline': movie.storyline || 'No storyline available.'
+            };
             
-            // Handle Screenshots
+            Object.keys(details).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) element.textContent = details[key];
+            });
+            
             const screenshotsSection = document.getElementById('screenshotsSection');
             const screenshotsWrapper = document.getElementById('screenshotsWrapper');
-            screenshotsWrapper.innerHTML = '';
-            
-            if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
-                screenshotsSection.style.display = 'block';
-                movie.screenshotLinks.forEach(link => {
-                    const slide = document.createElement('div');
-                    slide.className = 'swiper-slide';
-                    slide.innerHTML = `<img src="${link}" alt="Screenshot" loading="lazy">`;
-                    screenshotsWrapper.appendChild(slide);
-                });
-            } else {
-                screenshotsSection.style.display = 'none';
+            if (screenshotsSection && screenshotsWrapper) {
+                screenshotsWrapper.innerHTML = '';
+                
+                if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
+                    screenshotsSection.style.display = 'block';
+                    movie.screenshotLinks.forEach(link => {
+                        const slide = document.createElement('div');
+                        slide.className = 'swiper-slide';
+                        slide.innerHTML = `<img src="${link}" alt="Screenshot" loading="lazy">`;
+                        screenshotsWrapper.appendChild(slide);
+                    });
+                } else {
+                    screenshotsSection.style.display = 'none';
+                }
             }
             
-            // Load Ads 2 in modal - FIXED
             const ads2Container = document.getElementById('ads2-container');
-            if (adsConfig.ads2 && adsConfig.ads2.enabled && adsConfig.ads2.code) {
-                ads2Container.style.display = 'block';
-                document.getElementById('ads2').innerHTML = adsConfig.ads2.code;
-                console.log("Loaded Ads 2 in modal");
-            } else {
-                ads2Container.style.display = 'none';
-                console.log("Ads 2 disabled or no code");
+            const ads2Element = document.getElementById('ads2');
+            if (ads2Container && ads2Element) {
+                if (adsConfig.ads2 && adsConfig.ads2.enabled && adsConfig.ads2.code) {
+                    ads2Container.style.display = 'block';
+                    ads2Element.innerHTML = adsConfig.ads2.code;
+                } else {
+                    ads2Container.style.display = 'none';
+                }
             }
             
-            // Load download options
             loadDownloadOptions(movie);
             
-            // Show modal
-            document.getElementById('movieModal').style.display = 'flex';
+            const modal = document.getElementById('movieModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
             
-            // Initialize Swiper if screenshots exist
             if (movie.screenshotLinks && movie.screenshotLinks.length > 0) {
                 setTimeout(() => {
-                    new Swiper('#screenshotsSwiper', {
-                        navigation: {
-                            nextEl: '.swiper-button-next',
-                            prevEl: '.swiper-button-prev',
-                        },
-                        loop: true,
-                        autoplay: {
-                            delay: 3000,
-                            disableOnInteraction: false,
-                        },
-                    });
+                    try {
+                        new Swiper('#screenshotsSwiper', {
+                            navigation: {
+                                nextEl: '.swiper-button-next',
+                                prevEl: '.swiper-button-prev',
+                            },
+                            loop: true,
+                            autoplay: {
+                                delay: 3000,
+                                disableOnInteraction: false,
+                            },
+                        });
+                    } catch (error) {
+                        console.error("Swiper initialization error:", error);
+                    }
                 }, 100);
             }
         }
         
-        // Load Download Options - UPDATED with ad unlock system
-        function loadDownloadOptions(movie) {
+        // Load Download Options - ENHANCED WITH FILE SIZE FROM FIREBASE MOVIE DATA
+        async function loadDownloadOptions(movie) {
             const downloadOptionsContainer = document.getElementById('downloadOptions');
+            if (!downloadOptionsContainer) return;
+            
             const t = translations[currentLanguage];
             
             const adCount = adCounts[movie.id] || 0;
@@ -1840,99 +3265,266 @@
             
             let html = '';
             
-            movie.downloadOptions.forEach((server, serverIndex) => {
+            for (const [serverIndex, server] of movie.downloadOptions.entries()) {
                 const isNewServer = checkIfNewServer(movie, serverIndex);
+                const serverName = server.server || 'Server';
                 
                 html += `
                     <div class="download-server">
                         <div class="server-title">
                             <i class="fas fa-server"></i>
-                            <span>${server.server || 'Server'}</span>
+                            <span>${serverName}</span>
                             ${isNewServer ? `<span class="new-server-badge">${t.newServer}</span>` : ''}
                         </div>
                         <div class="quality-options">
                 `;
                 
-                server.qualities.forEach((quality, qualityIndex) => {
-                    const optionId = `option_${movie.id}_${serverIndex}_${qualityIndex}`;
-                    
-                    if (isUnlocked) {
-                        // Get the download URL using our new function with multiple domain fallback
-                        const downloadUrl = getDownloadUrl(quality.path);
+                if (server.qualities && server.qualities.length > 0) {
+                    for (const [qualityIndex, quality] of server.qualities.entries()) {
+                        const optionId = `option_${movie.id}_${serverIndex}_${qualityIndex}`;
+                        const downloadType = getDownloadType(quality.path);
+                        const downloadTypeText = downloadType === 'streaming' ? t.streaming : t.direct_download;
                         
-                        html += `
-                            <div class="quality-option unlocked" id="${optionId}">
-                                <div class="quality-text">${quality.quality_text || 'Quality'}</div>
-                                <a href="${downloadUrl}" 
-                                   class="download-btn" 
-                                   target="_blank"
-                                   onclick="showToastMessage('${t.toast_download_starting}')">
-                                    <i class="fas fa-download"></i> ${t.download_now_button}
-                                </a>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="quality-option locked" id="${optionId}">
-                                <div class="quality-text">${quality.quality_text || 'Quality'}</div>
-                                <button class="unlock-btn" 
-                                        onclick="processAdUnlock('${movie.id}', ${requiredAds}, this)"
-                                        data-movie-id="${movie.id}"
-                                        data-required-ads="${requiredAds}">
-                                    <i class="fas fa-lock"></i> 
-                                    <span class="unlock-text">
-                                        ${t.unlock_button.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}
-                                    </span>
-                                </button>
-                                ${adCount > 0 ? `<div class="timer-progress">${t.toast_progress.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}</div>` : ''}
-                            </div>
-                        `;
+                        // Get file size directly from movie data (NEW APPROACH)
+                        const fileSize = quality.file_size ? quality.file_size : 
+                                        await getFileSize(movie.id, serverName, quality.quality_text, quality.path, movie);
+                        
+                        if (isUnlocked) {
+                            const downloadUrl = getDownloadUrl(quality.path, serverName, movie);
+                            
+                            html += `
+                                <div class="quality-option unlocked" id="${optionId}">
+                                    <div class="quality-text">${quality.quality_text || 'Quality'}</div>
+                                    <div class="download-link-details">
+                                        <div class="file-size">
+                                            <i class="fas fa-hdd"></i>
+                                            <span>${t.file_size}: ${fileSize}</span>
+                                        </div>
+                                        <span class="download-type">${downloadTypeText}</span>
+                                    </div>
+                                    <a href="javascript:void(0)" 
+                                        class="download-btn" 
+                                        data-download-url="${downloadUrl}"
+                                        onclick="startDownload('${movie.id}', '${serverName}', '${quality.quality_text || 'Quality'}', this, event)"
+                                        oncontextmenu="return false;">
+                                        <i class="fas fa-download"></i> ${t.download_now_button}
+                                    </a>
+                                    <div class="download-progress" id="progress_${optionId}">
+                                        <div class="download-progress-bar"></div>
+                                    </div>
+                                    
+                                    
+                                    <!--
+                                        
+                                        button class="copy-link-btn" onclick="copyDownloadLink('${downloadUrl}')">
+                                        <i class="fas fa-copy"></i> ${t.copy_link}
+                                    </button
+                                    
+                                    -->
+
+
+                                    <div class="link-generated" id="link_generated_${optionId}">
+                                        <i class="fas fa-check-circle"></i> ${t.link_generated}
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="quality-option locked" id="${optionId}">
+                                    <div class="quality-text">${quality.quality_text || 'Quality'}</div>
+                                    <div class="download-link-details">
+                                        <div class="file-size">
+                                            <i class="fas fa-hdd"></i>
+                                            <span>${t.file_size}: ${fileSize}</span>
+                                        </div>
+                                        <span class="download-type">${downloadTypeText}</span>
+                                    </div>
+                                    <button class="unlock-btn" 
+                                            onclick="processAdUnlock('${movie.id}', ${requiredAds}, this)"
+                                            data-movie-id="${movie.id}"
+                                            data-required-ads="${requiredAds}">
+                                        <i class="fas fa-lock"></i> 
+                                        <span class="unlock-text">
+                                            ${t.unlock_button.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}
+                                        </span>
+                                    </button>
+                                    <div class="download-progress" id="progress_${optionId}" style="display: none;">
+                                        <div class="download-progress-bar"></div>
+                                    </div>
+                                    ${adCount > 0 ? `<div class="timer-progress">${t.toast_progress.replace('{adCount}', adCount).replace('{requiredCount}', requiredAds)}</div>` : ''}
+                                </div>
+                            `;
+                        }
                     }
-                });
+                }
                 
                 html += `
                         </div>
                     </div>
                 `;
-            });
+            }
             
             downloadOptionsContainer.innerHTML = html;
         }
         
-        // Process Ad Unlock - Fixed version
+        // Start Download with progress
+        function startDownload(movieId, serverName, quality, button, event) {
+            const t = translations[currentLanguage];
+            
+
+            // Prevent right-click and show context menu
+    if (event && event.type === 'contextmenu') {
+        event.preventDefault();
+        return false;
+    }
+
+    // Get URL from data attribute instead of href
+    const url = button.getAttribute('data-download-url');
+
+
+    if (!url) {
+        showNotification("Download URL not found", true);
+        return false;
+    }
+
+    
+    // Create a temporary iframe for direct download
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+            
+            const progressId = `progress_option_${movieId}_${serverName}_${quality}`.replace(/\s+/g, '_');
+            const progressBar = document.getElementById(`progress_${progressId}`);
+            const progressBarInner = progressBar ? progressBar.querySelector('.download-progress-bar') : null;
+            
+            if (progressBar && progressBarInner) {
+                progressBar.style.display = 'block';
+                
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress > 100) progress = 100;
+                    progressBarInner.style.width = progress + '%';
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            progressBar.style.display = 'none';
+                            progressBarInner.style.width = '0%';
+
+                             // Remove iframe after download
+                    setTimeout(() => {
+                        if (iframe.parentNode) {
+                            iframe.parentNode.removeChild(iframe);
+                        }
+                    }, 1000);
+                            
+                        }, 500);
+                    }
+                }, 200);
+            }
+            
+            downloadQueue.push({
+                movieId: movieId,
+                serverName: serverName,
+                quality: quality,
+                url: url,
+                timestamp: Date.now()
+            });
+            
+            showNotification(t.toast_download_starting);
+            
+            processDownloadQueue();
+            
+            return true;
+        }
+        
+        // Process Download Queue
+        function processDownloadQueue() {
+            if (!isOnline || activeDownloads >= maxParallelDownloads) return;
+            
+            while (downloadQueue.length > 0 && activeDownloads < maxParallelDownloads) {
+                const download = downloadQueue.shift();
+                activeDownloads++;
+                
+                setTimeout(() => {
+                    activeDownloads--;
+                    processDownloadQueue();
+                }, 3000);
+            }
+        }
+        
+        // Process pending downloads when online
+        function processPendingDownloads() {
+            if (!isOnline) return;
+            
+            const pendingDownloads = JSON.parse(localStorage.getItem('pendingDownloads') || '[]');
+            
+            if (pendingDownloads.length > 0) {
+                pendingDownloads.forEach(download => {
+                    downloadQueue.push(download);
+                });
+                
+                localStorage.removeItem('pendingDownloads');
+                processDownloadQueue();
+            }
+        }
+      
+        /*
+        // Copy Download Link to Clipboard
+        function copyDownloadLink(url) {
+            const t = translations[currentLanguage];
+            
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification(t.link_copied);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification(t.link_copied);
+            });
+        }
+        
+        */
+
+        // Process Ad Unlock
         async function processAdUnlock(movieId, requiredCount, button) {
             if (button.disabled) return;
             
             const t = translations[currentLanguage];
+            
+            if (!isOnline) {
+                showNotification("You are offline. Please connect to the internet to unlock.", true);
+                return;
+            }
+            
             button.disabled = true;
             
-            // Store original button content
             const originalHtml = button.innerHTML;
             button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.loading_ad}`;
             
             try {
-                // Show ad using the new SDK  
                 await showUnlockAd();
                 
-                // Increment ad count
                 adCounts[movieId] = (adCounts[movieId] || 0) + 1;
                 localStorage.setItem('adCounts', JSON.stringify(adCounts));
                 
                 const newAdCount = adCounts[movieId];
                 
                 if (newAdCount >= requiredCount) {
-                    // Unlocked successfully
                     showNotification(t.toast_unlocked);
                     unlockedMovies[movieId] = true;
                     sessionStorage.setItem('unlockedMovies', JSON.stringify(unlockedMovies));
                     
-                    // Reload download options to show download buttons
                     loadDownloadOptionsForCurrentMovie();
                 } else {
-                    // Still need more ads
                     showNotification(t.toast_progress.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount));
                     
-                    // Start timer
                     let countdown = timerDuration;
                     button.innerHTML = `<i class="fas fa-clock"></i> ${t.verifying_button.replace('{countdown}', countdown)}`;
                     
@@ -1942,15 +3534,12 @@
                             button.innerHTML = `<i class="fas fa-clock"></i> ${t.verifying_button.replace('{countdown}', countdown)}`;
                         } else {
                             clearInterval(timerInterval);
-                            // Re-enable button with updated count
                             button.disabled = false;
                             button.innerHTML = originalHtml;
-                            // Update button text with new count
                             const unlockText = button.querySelector('.unlock-text');
                             if (unlockText) {
                                 unlockText.textContent = t.unlock_button.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount);
                             }
-                            // Update progress indicator
                             const timerProgress = button.parentElement.querySelector('.timer-progress');
                             if (timerProgress) {
                                 timerProgress.textContent = t.toast_progress.replace('{adCount}', newAdCount).replace('{requiredCount}', requiredCount);
@@ -1962,7 +3551,6 @@
             } catch (error) {
                 console.error("Ad error:", error);
                 showNotification(t.toast_ad_error, true);
-                // Reset button on error
                 button.disabled = false;
                 button.innerHTML = originalHtml;
             }
@@ -2003,6 +3591,8 @@
         // Search Movies
         function searchMovies(query) {
             const moviesGrid = document.getElementById('moviesGrid');
+            if (!moviesGrid) return;
+            
             const t = translations[currentLanguage];
             
             moviesGrid.innerHTML = `
@@ -2012,84 +3602,207 @@
                 </div>
             `;
             
-            db.collection('movies')
-                .where('title', '>=', query)
-                .where('title', '<=', query + '\uf8ff')
-                .limit(20)
-                .get()
-                .then(snapshot => {
-                    moviesGrid.innerHTML = '';
-                    
-                    if (snapshot.empty) {
-                        moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
-                        return;
-                    }
-                    
-                    let movieCount = 0;
-                    snapshot.forEach(doc => {
-                        const movie = doc.data();
-                        movie.id = doc.id;
-                        createMovieCard(movie, movieCount);
-                        movieCount++;
+            const lowerQuery = query.toLowerCase();
+            
+            if (isOnline) {
+                db.collection('movies')
+                    .get()
+                    .then(snapshot => {
+                        moviesGrid.innerHTML = '';
+                        
+                        if (snapshot.empty) {
+                            moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
+                            return;
+                        }
+                        
+                        let movieCount = 0;
+                        let foundMovies = 0;
+                        
+                        snapshot.forEach(doc => {
+                            const movie = doc.data();
+                            movie.id = doc.id;
+                            
+                            const title = movie.title || '';
+                            if (title.toLowerCase().includes(lowerQuery)) {
+                                createMovieCard(movie, movieCount);
+                                foundMovies++;
+                                movieCount++;
+                            }
+                        });
+                        
+                        if (foundMovies === 0) {
+                            moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
+                        }
+                        
+                        const loadMoreContainer = document.getElementById('loadMoreContainer');
+                        if (loadMoreContainer) {
+                            loadMoreContainer.style.display = 'none';
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Search error:", error);
+                        searchMoviesOffline(query);
                     });
-                    
-                    document.getElementById('loadMoreContainer').style.display = 'none';
-                })
-                .catch(error => {
-                    console.error("Search error:", error);
-                    showNotification(t.notificationSearchError, true);
+            } else {
+                searchMoviesOffline(query);
+            }
+        }
+        
+        // Search Movies Offline
+        function searchMoviesOffline(query) {
+            const moviesGrid = document.getElementById('moviesGrid');
+            if (!moviesGrid) return;
+            
+            const t = translations[currentLanguage];
+            const lowerQuery = query.toLowerCase();
+            
+            const cachedMovies = localStorage.getItem('cachedMovies');
+            if (!cachedMovies) {
+                moviesGrid.innerHTML = `<p class="loading">${t.noMovies} (Offline)</p>`;
+                return;
+            }
+            
+            try {
+                const movies = JSON.parse(cachedMovies);
+                moviesGrid.innerHTML = '';
+                
+                let movieCount = 0;
+                let foundMovies = 0;
+                
+                movies.forEach(movie => {
+                    const title = movie.title || '';
+                    if (title.toLowerCase().includes(lowerQuery)) {
+                        createMovieCard(movie, movieCount);
+                        foundMovies++;
+                        movieCount++;
+                    }
                 });
+                
+                if (foundMovies === 0) {
+                    moviesGrid.innerHTML = `<p class="loading">${t.noMovies} (Offline)</p>`;
+                }
+                
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+                if (loadMoreContainer) {
+                    loadMoreContainer.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error("Offline search error:", error);
+                moviesGrid.innerHTML = `<p class="loading">${t.noMovies}</p>`;
+            }
         }
         
         // Setup Event Listeners
         function setupEventListeners() {
-            // Language toggle
-            document.getElementById('langToggle').addEventListener('click', toggleLanguage);
+            const langToggle = document.getElementById('langToggle');
+            if (langToggle) {
+                langToggle.addEventListener('click', toggleLanguage);
+            }
             
-            // Search input
             const searchInput = document.getElementById('searchInput');
-            let searchTimeout;
-            
-            searchInput.addEventListener('input', function() {
-                clearTimeout(searchTimeout);
-                const query = this.value.trim();
+            if (searchInput) {
+                let searchTimeout;
                 
-                if (query.length === 0) {
-                    lastVisible = null;
-                    loadMovies();
-                    document.getElementById('loadMoreContainer').style.display = 'block';
-                    return;
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length === 0) {
+                        lastVisible = null;
+                        loadMovies();
+                        const loadMoreContainer = document.getElementById('loadMoreContainer');
+                        if (loadMoreContainer) {
+                            loadMoreContainer.style.display = 'block';
+                        }
+                        return;
+                    }
+                    
+                    if (query.length < 1) return;
+                    
+                    searchTimeout = setTimeout(() => {
+                        searchMovies(query);
+                    }, 300);
+                });
+            }
+            
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    loadMovies(true);
+                });
+            }
+            
+            const closeModal = document.getElementById('closeModal');
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    const modal = document.getElementById('movieModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            }
+            
+            const movieModal = document.getElementById('movieModal');
+            if (movieModal) {
+                movieModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('movieModal');
+                    if (modal && modal.style.display === 'flex') {
+                        modal.style.display = 'none';
+                    }
                 }
-                
-                if (query.length < 2) return;
-                
-                searchTimeout = setTimeout(() => {
-                    searchMovies(query);
-                }, 500);
             });
-            
-            // Load more button
-            document.getElementById('loadMoreBtn').addEventListener('click', function() {
-                loadMovies(true);
-            });
-            
-            // Close modal
-            document.getElementById('closeModal').addEventListener('click', function() {
-                document.getElementById('movieModal').style.display = 'none';
-            });
-            
-            // Close modal on outside click
-            document.getElementById('movieModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
+
+
+                // Disable right-click/long press context menu for download buttons
+    document.addEventListener('contextmenu', function(e) {
+        // Check if the clicked element is a download button or inside download section
+        if (e.target.closest('.download-btn') || 
+            e.target.closest('.quality-option') ||
+            e.target.closest('.download-options')) {
+            e.preventDefault();
+            showNotification("Right-click is disabled for download buttons");
+            return false;
+        }
+    });
+
+    // Also prevent text selection on download buttons
+    document.addEventListener('selectstart', function(e) {
+        if (e.target.closest('.download-btn') || 
+            e.target.closest('.quality-option') ||
+            e.target.closest('.download-options')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // Prevent drag on download buttons
+    document.addEventListener('dragstart', function(e) {
+        if (e.target.closest('.download-btn') || 
+            e.target.closest('.quality-option') ||
+            e.target.closest('.download-options')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+
         }
         
         // Show Notification
         function showNotification(message, isError = false) {
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
+            
+            if (!notification || !notificationText) return;
             
             notificationText.textContent = message;
             
@@ -2106,10 +3819,34 @@
             }, 3000);
         }
         
+
+
         // Global functions for HTML access
         window.processAdUnlock = processAdUnlock;
         window.showToastMessage = showToastMessage;
         window.toggleLanguage = toggleLanguage;
+        window.startDownload = startDownload;
+        // window.copyDownloadLink = copyDownloadLink;
+        
+        // Refresh movies function
+        window.refreshMovies = function() {
+            lastVisible = null;
+            loadMovies();
+        };
+        
+        // Refresh slider function
+        window.refreshSlider = function() {
+            loadSlider();
+        };
+        
+        // Force sync function
+        window.forceSync = function() {
+            if (isOnline) {
+                autoSyncData();
+            } else {
+                showNotification("You are offline. Cannot sync.", true);
+            }
+        };
     </script>
 </body>
-    </html>
+</html>
